@@ -5,6 +5,9 @@ import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from 
 import { Input } from "./ui/input";
 
 const SignUpForm = () => {
+    if (error) return <div>
+        Error in SingUp
+    </div>
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
