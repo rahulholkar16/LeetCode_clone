@@ -5,6 +5,7 @@ import { Card, CardContent } from "./ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "./ui/field";
 import { Input } from "./ui/input";
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 const SignUpForm = () => {
     const onSubmit = async (formData: FormData) => {
@@ -20,13 +21,14 @@ const SignUpForm = () => {
                 <div>Loading...</div>
             },
             onSuccess: () => {
-                redirect("/")
+                toast.success("Sing up successfully");
+                redirect("/");
             },
             onError: (ctx) => {
+                toast.error(ctx.error.message);
                 console.error("Error:: ", ctx.error.message);
             }
         });
-
         console.log(data);
     };
     return (
