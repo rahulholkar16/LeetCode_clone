@@ -1,18 +1,39 @@
 "use client";
+import { authClient } from "@/lib/auth-client";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "./ui/field";
 import { Input } from "./ui/input";
+import { redirect } from "next/navigation";
 
 const SignUpForm = () => {
-    if (error) return <div>
-        Error in SingUp
-    </div>
+    const onSubmit = async (formData: FormData) => {
+        const email = String(formData.get("email"));
+        const name = String(formData.get("name"));
+        const password = String(formData.get("password"));
+        const {data, error} = await authClient.signUp.email({
+            email,
+            password,
+            name
+        }, {
+            onRequest: () => {
+                <div>Loading...</div>
+            },
+            onSuccess: () => {
+                redirect("/")
+            },
+            onError: (ctx) => {
+                console.error("Error:: ", ctx.error.message);
+            }
+        });
+
+        console.log(data);
+    };
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0">
-                    <form className="p-6">
+                    <form action={onSubmit} className="p-6">
                         <FieldGroup>
                             <div className="flex flex-col items-center gap-2 text-center">
                                 <h1 className="text-2xl font-bold">
@@ -28,6 +49,7 @@ const SignUpForm = () => {
                                 <Input
                                     id="email"
                                     type="email"
+                                    name="email"
                                     placeholder="m@example.com"
                                     required
                                 />
@@ -36,6 +58,22 @@ const SignUpForm = () => {
                                     not share your email with anyone else.
                                 </FieldDescription>
                             </Field>
+
+                            <Field>
+                                <FieldLabel htmlFor="name">Name</FieldLabel>
+                                <Input
+                                    id="name"
+                                    type="text"
+                                    name="name"
+                                    placeholder="Jhon Doe"
+                                    required
+                                />
+                                <FieldDescription>
+                                    We&apos;ll use this to contact you. We will
+                                    not share your Name with anyone else.
+                                </FieldDescription>
+                            </Field>
+
                             <Field>
                                 <Field className="grid grid-cols-2 gap-4">
                                     <Field>
@@ -45,6 +83,7 @@ const SignUpForm = () => {
                                         <Input
                                             id="password"
                                             type="password"
+                                            name="password"
                                             required
                                         />
                                     </Field>
@@ -55,6 +94,7 @@ const SignUpForm = () => {
                                         <Input
                                             id="confirm-password"
                                             type="password"
+                                            name="confirm-password"
                                             required
                                         />
                                     </Field>
