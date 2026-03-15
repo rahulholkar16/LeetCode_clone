@@ -5,10 +5,21 @@ import { auth } from "../auth";
 
 export const signUpUser = async (data: SignUpUserData) => {
     const { email, name, password } = data;
-    return await auth.api.signUpEmail({
-        body: {
-            email, password, name
-        },
-        asResponse: true
-    })
+    try {
+        const res = await auth.api.signUpEmail({
+            body: {
+                email, password, name
+            },
+        });
+        return {
+            success: true,
+            data: res,
+        };
+    } catch (error: any) {
+        console.error("Sign up failed:: ", error);
+        return {
+            success: false,
+            message: error?.message || "Signup failed",
+        };
+    }
 };
