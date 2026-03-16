@@ -1,10 +1,9 @@
 "use client";
-import { authClient } from "@/lib/auth-client";
+import { signUpUser } from "@/actions/auth/auth";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "./ui/field";
 import { Input } from "./ui/input";
-import { redirect } from "next/navigation";
 import { toast } from "sonner";
 
 const SignUpForm = () => {
@@ -12,25 +11,19 @@ const SignUpForm = () => {
         const email = String(formData.get("email"));
         const name = String(formData.get("name"));
         const password = String(formData.get("password"));
-        const {data, error} = await authClient.signUp.email({
-            email,
-            password,
-            name
-        }, {
-            onRequest: () => {
-                <div>Loading...</div>
-            },
-            onSuccess: () => {
-                toast.success("Sing up successfully");
-                redirect("/");
-            },
-            onError: (ctx) => {
-                toast.error(ctx.error.message);
-                console.error("Error:: ", ctx.error.message);
+        try {
+            const result = await signUpUser({ email, name, password });
+            if (!result.success) {
+                toast.error(result.message);
+                return;
             }
-        });
-        console.log(data);
+            toast.success("User created successfully");
+        } catch (error) {
+            toast.error("Something went wrong");
+            console.error("Error:: ", error);
+        }
     };
+    
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
