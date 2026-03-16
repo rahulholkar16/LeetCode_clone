@@ -9,25 +9,30 @@ import {
     FieldSeparator,
 } from "./ui/field";
 import { Button } from "./ui/button";
-import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { signInUser } from "@/actions/auth/auth";
+import { redirect } from "next/navigation";
 
 const SingInForm = () => {
     const onSubmit = async (formData: FormData) => {
         const email = String(formData.get("email"));
         const password = String(formData.get("password"));
-        const { data, error } = await authClient.signIn.email({
-            email,
-            password,
-            callbackURL: "/",
-        }, {
-            onError: (ctx) => {
-                toast.error(ctx.error.message);
-                console.error("Error Form Login:: ", ctx);
-            },
-        });
-
-        console.log("LOGIN:: ", data);
+        try {
+            const result = await signInUser({ email, password });
+            if (!result.success) {
+                toast.error(result.message);
+                return;
+            }
+            toast.success("User login successfully");
+            if (result.success) {
+                redirect("/");
+            }
+        } catch (error) {
+            console.log(error);
+            
+            toast.error("Something went wrong");
+            console.error("Error:: ", error);
+        }
     };
     return (
         <div className="flex flex-col gap-6">
@@ -101,7 +106,7 @@ const SingInForm = () => {
                                 </Button>
                             </Field>
                             <FieldDescription className="text-center">
-                                Don't have an account? <a href="#">Sign up</a>
+                                Don&apos;t have an account? <a href="#">Sign up</a>
                             </FieldDescription>
                         </FieldGroup>
                     </form>
