@@ -1,8 +1,18 @@
 "use server";
 
-import { SignInUserData, SignUpUserData } from "@/types";
+import { ActionResponse, SignInUserData, SignUpUserData } from "@/types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+
+const handleError = (error: unknown): ActionResponse<null> => {
+    const message =
+        error instanceof Error ? error.message : "Something went wrong";
+
+    return {
+        success: false,
+        message,
+    };
+};
 
 export const signUpUser = async (data: SignUpUserData) => {
     const { email, name, password } = data;
@@ -17,12 +27,7 @@ export const signUpUser = async (data: SignUpUserData) => {
             data: res,
         };
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Something went wrong";
-        console.error("Sign up failed:: ", error);
-        return {
-            success: false,
-            message: message,
-        };
+        return handleError(error);
     }
 };
 
@@ -43,11 +48,6 @@ export const signInUser = async (data: SignInUserData) => {
             data: res
         }
     } catch (error) {
-        const message = error instanceof Error ? error.message : "Something went wrong";
-        console.error("Sign in failed:: ", error);
-        return {
-            success: false,
-            message: message,
-        };
+        return handleError(error);
     }
 };
