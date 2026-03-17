@@ -34,7 +34,7 @@ export const signInUser = async (data: SignInUserData) => {
                 email,
                 password,
                 rememberMe: true,
-                callbackURL: "http://localhost:3000",
+                callbackURL: process.env.BETTER_AUTH_URL,
             },
             headers: await headers(),
         });
