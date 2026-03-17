@@ -16,11 +16,12 @@ export const signUpUser = async (data: SignUpUserData) => {
             success: true,
             data: res,
         };
-    } catch (error: any) {
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Something went wrong";
         console.error("Sign up failed:: ", error);
         return {
             success: false,
-            message: error?.message || "Signup failed",
+            message: message,
         };
     }
 };
@@ -41,11 +42,12 @@ export const signInUser = async (data: SignInUserData) => {
             success: true,
             data: res
         }
-    } catch (error: any) {
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Something went wrong";
         console.error("Sign in failed:: ", error);
         return {
             success: false,
-            message: error?.message || "Signin failed",
+            message: message,
         };
     }
 };
