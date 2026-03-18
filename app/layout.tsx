@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/provider/query-provider";
+import { CircleX } from "lucide-react";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -26,7 +27,11 @@ export default function RootLayout({
       <html lang="en" className={cn("font-sans", geist.variable)}>
           <body className={`${inter} antialiased`}>
               <QueryProvider>{children}</QueryProvider>
-              <Toaster />
+              <Toaster
+                  icons={{
+                      error: <CircleX color="#ff0000" />,
+                  }}
+              />
           </body>
       </html>
   );
