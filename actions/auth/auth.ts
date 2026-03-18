@@ -3,10 +3,10 @@
 import { ActionResponse, SignInUserData, SignUpUserData } from "@/types";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { signInSchema, signUpSchema } from "@/lib/validators/auth.validator";
 
 const handleError = (error: unknown): ActionResponse<null> => {
-    const message =
-        error instanceof Error ? error.message : "Something went wrong";
+    const message = error instanceof Error ? error.message : "Something went wrong";
 
     return {
         success: false,
@@ -14,8 +14,17 @@ const handleError = (error: unknown): ActionResponse<null> => {
     };
 };
 
-export const signUpUser = async (data: SignUpUserData) => {
-    const { email, name, password } = data;
+export const signUpUser = async (data: SignUpUserData): Promise<ActionResponse<any>> => {
+    const validated = signUpSchema.safeParse(data);
+
+    if (!validated.success) {
+        return {
+            success: false,
+            message: validated.error.issues[0].message,
+        };
+    }
+
+    const { email, password, name } = validated.data;
     try {
         const res = await auth.api.signUpEmail({
             body: {
@@ -31,8 +40,14 @@ export const signUpUser = async (data: SignUpUserData) => {
     }
 };
 
-export const signInUser = async (data: SignInUserData) => {
-    const { email, password } = data;
+export const signInUser = async (data: SignInUserData): Promise<ActionResponse<any>> => {
+    const validated = signInSchema.safeParse(data);
+
+    if (!validated.success) return {
+        success: false,
+        message: validated.error.issues[0].message
+    }
+    const { email, password } = validated.data;
     try {
         const res = await auth.api.signInEmail({
             body: {
