@@ -10,35 +10,46 @@ import {
 } from "./ui/field";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { signInUser } from "@/actions/auth/auth";
-import { redirect } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2Icon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const SingInForm = () => {
+    const { signIn, isSigningIn } = useAuth();
+    const router = useRouter();
+
     const onSubmit = async (formData: FormData) => {
         const email = String(formData.get("email"));
         const password = String(formData.get("password"));
+
         try {
-            const result = await signInUser({ email, password });
+            const result = await signIn({ email, password });
+
             if (!result.success) {
                 toast.error(result.message);
                 return;
             }
+
             toast.success("User login successfully");
-            if (result.success) {
-                redirect("/");
-            }
+            router.push("/");
         } catch (error) {
-            console.log(error);
-            
             toast.error("Something went wrong");
-            console.error("Error:: ", error);
+            console.error(error);
         }
     };
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0">
-                    <form action={onSubmit} className="p-6">
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.currentTarget);
+                            onSubmit(formData);
+                        }}
+                        className="p-6"
+                    >
                         <FieldGroup>
                             <div className="flex flex-col items-center gap-2 text-center">
                                 <h1 className="text-2xl font-bold">
@@ -57,6 +68,7 @@ const SingInForm = () => {
                                     name="email"
                                     placeholder="m@example.com"
                                     required
+                                    disabled={isSigningIn}
                                 />
                             </Field>
 
@@ -68,12 +80,25 @@ const SingInForm = () => {
                                     id="password"
                                     type="password"
                                     name="password"
+                                    disabled={isSigningIn}
                                     required
                                 />
                             </Field>
 
                             <Field>
-                                <Button type="submit">Login</Button>
+                                <Button type="submit" disabled={isSigningIn}>
+                                    {isSigningIn ? (
+                                        <Loader2Icon
+                                            role="status"
+                                            aria-label="Loading"
+                                            className={cn(
+                                                "size-4 animate-spin",
+                                            )}
+                                        />
+                                    ) : (
+                                        "Login"
+                                    )}
+                                </Button>
                             </Field>
                             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                                 Or continue with
@@ -106,7 +131,8 @@ const SingInForm = () => {
                                 </Button>
                             </Field>
                             <FieldDescription className="text-center">
-                                Don&apos;t have an account? <a href="#">Sign up</a>
+                                Don&apos;t have an account?{" "}
+                                <a href="#">Sign up</a>
                             </FieldDescription>
                         </FieldGroup>
                     </form>

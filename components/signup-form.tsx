@@ -1,29 +1,41 @@
 "use client";
-import { signUpUser } from "@/actions/auth/auth";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { Field, FieldDescription, FieldGroup, FieldLabel, FieldSeparator } from "./ui/field";
+import {
+    Field,
+    FieldDescription,
+    FieldGroup,
+    FieldLabel,
+    FieldSeparator
+} from "./ui/field";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { Loader2Icon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
+    const { signUp, isSigningUp } = useAuth();
+    const router = useRouter();
     const onSubmit = async (formData: FormData) => {
         const email = String(formData.get("email"));
         const name = String(formData.get("name"));
         const password = String(formData.get("password"));
         try {
-            const result = await signUpUser({ email, name, password });
+            const result = await signUp({ email, name, password });
             if (!result.success) {
                 toast.error(result.message);
                 return;
             }
             toast.success("User created successfully");
+            router.push("/sign-in");
         } catch (error) {
             toast.error("Something went wrong");
             console.error("Error:: ", error);
         }
     };
-    
+
     return (
         <div className="flex flex-col gap-6">
             <Card className="overflow-hidden p-0">
@@ -46,6 +58,7 @@ const SignUpForm = () => {
                                     type="email"
                                     name="email"
                                     placeholder="m@example.com"
+                                    disabled={isSigningUp}
                                     required
                                 />
                                 <FieldDescription>
@@ -61,6 +74,7 @@ const SignUpForm = () => {
                                     type="text"
                                     name="name"
                                     placeholder="Jhon Doe"
+                                    disabled={isSigningUp}
                                     required
                                 />
                                 <FieldDescription>
@@ -79,6 +93,7 @@ const SignUpForm = () => {
                                             id="password"
                                             type="password"
                                             name="password"
+                                            disabled={isSigningUp}
                                             required
                                         />
                                     </Field>
@@ -90,6 +105,7 @@ const SignUpForm = () => {
                                             id="confirm-password"
                                             type="password"
                                             name="confirm-password"
+                                            disabled={isSigningUp}
                                             required
                                         />
                                     </Field>
@@ -99,7 +115,19 @@ const SignUpForm = () => {
                                 </FieldDescription>
                             </Field>
                             <Field>
-                                <Button type="submit">Create Account</Button>
+                                <Button type="submit">
+                                    {isSigningUp ? (
+                                        <Loader2Icon
+                                            role="status"
+                                            aria-label="Loading"
+                                            className={cn(
+                                                "size-4 animate-spin",
+                                            )}
+                                        />
+                                    ) : (
+                                        "Create Account"
+                                    )}
+                                </Button>
                             </Field>
                             <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                                 Or continue with
