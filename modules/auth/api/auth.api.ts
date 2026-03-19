@@ -1,5 +1,5 @@
 import { SignInUserData, SignUpUserData } from "@/types";
-import { signInSchema, signUpSchema } from "@/lib/validators/auth.validator";
+import { signInSchema, signUpSchema } from "@/modules/auth/validators/auth.validator";
 
 export const signInUser = async (data: SignInUserData) => {
     const validated = signInSchema.safeParse(data);
