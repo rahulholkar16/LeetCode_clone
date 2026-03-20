@@ -1,18 +1,23 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "../store/auth-store";
-import { getSession } from "../api/auth.api";
+import { useEffect } from "react";
+import { useAuthStore } from "@/modules/auth/store/auth-store";
+import { fetchSession } from "../api/session.api";
 
 export const useSession = () => {
-    const setUser = useAuthStore(s => s.setUser);
+    const setUser = useAuthStore((s) => s.setUser);
 
-    const {status, error, isPending, data} = useQuery({
+    const { data, isLoading } = useQuery({
         queryKey: ["session"],
-        queryFn: getSession,
+        queryFn: fetchSession,
+        staleTime: 1000 * 60 * 5,
+        retry: false,
     });
 
-    if (data?.session?.user ) {
-        setUser(data?.session?.user)
-    }
+    useEffect(() => {
+        if (data) {
+            setUser(data?.user || null);
+        }
+    }, [data, setUser]);
 
-    return { isPending, status, error, data };
+    return { data, isLoading };
 };
