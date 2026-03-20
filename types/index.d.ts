@@ -22,14 +22,18 @@ type ActionResponse<T> = {
 };
 
 interface USER {
-    id: string,
+    id: string;
+    createdAt: Date;
+    updatedAt: Date;
     email: string;
+    emailVerified: boolean;
     name: string;
-}
+    image ?: string | null | undefined;
+};
 
 type AuthState = {
     user: USER | null;
     isAuthenticated: boolean;
-    setUser: (user: USER) => void;
+    setUser: (user: USER | null) => void;
     logout: () => void;
 };
