@@ -1,49 +1,122 @@
-import { SignInUserData, SignUpUserData } from "@/types";
+"use server";
+
+import { ActionResponse, SignInUserData, SignUpUserData } from "@/types";
 import { signInSchema, signUpSchema } from "@/modules/auth/validators/auth.validator";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
-export const signInUser = async (data: SignInUserData) => {
+// ✅ SIGN IN
+export const signInUser = async (
+    data: SignInUserData
+): Promise<ActionResponse<any>> => {
     const validated = signInSchema.safeParse(data);
-    if (!validated.success) return {
-        success: false,
-        message: validated.error.issues.map((e) => e.message).join(", ")
-    }
-    const res = await fetch("/api/auth/sign-in/email", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            ...validated.data,
-            rememberMe: true,
-            callbackURL: window.location.origin,
-        }),
-    });
 
-    if (!res.ok) {
-        throw new Error("Login failed");
+    if (!validated.success) {
+        return {
+            success: false,
+            message: validated.error.issues.map((e) => e.message).join(", "),
+        };
     }
 
-    return res.json();
+    try {
+        const res = await auth.api.signInEmail({
+            body: {
+                email: validated.data.email,
+                password: validated.data.password,
+                rememberMe: true,
+                callbackURL: "/",
+            },
+            headers: await headers(),
+            asResponse: true,
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            return {
+                success: false,
+                message: result?.message || "Login failed",
+            };
+        }
+
+        return {
+            success: true,
+            data: result,
+            message: "Login successful 🎉",
+        };
+    } catch (error) {
+        console.error("ERROR:: ", error);
+        return {
+            success: false,
+            message: "Something went wrong. Try again!",
+        };
+    }
 };
 
+// ✅ SIGN UP
 export const signUpUser = async (data: SignUpUserData) => {
     const validated = signUpSchema.safeParse(data);
-    if (!validated.success) return {
-        success: false,
-        message: validated.error.issues.map((e) => e.message).join(", "),
-    };
 
-    const res = await fetch("/api/auth/sign-up/email", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            ...validated.data,
-            callbackURL: window.location.origin,
-        }),
-    });
+    if (!validated.success) {
+        return {
+            success: false,
+            message: validated.error.issues.map((e) => e.message).join(", "),
+        };
+    }
 
-    if (!res.ok) throw new Error("Signup failed");
-    return res.json();
+    try {
+        const res = await auth.api.signUpEmail({
+            body: {
+                ...validated.data,
+                callbackURL: "/", // ⚠️ server me window nahi hota
+            },
+            headers: await headers(),
+            asResponse: true,
+        });
+
+        const result = await res.json();
+
+        if (!res.ok) {
+            return {
+                success: false,
+                message: result?.message || "Signup failed",
+            };
+        }
+
+        return {
+            success: true,
+            data: result,
+            message: "Signup successful 🎉",
+        };
+    } catch (error) {
+        console.error("SIGNUP ERROR:: ", error);
+        return {
+            success: false,
+            message: "Something went wrong!",
+        };
+    }
+};
+
+// ✅ SIGN OUT
+export const signOutUser = async () => {
+    try {
+        await auth.api.signOut({
+            headers: await headers(),
+        });
+    } catch (error) {
+        console.error("Error in SignOut:: ", error);
+    }
+};
+
+// ✅ GET SESSION
+export const getSession = async () => {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers(),
+        });
+
+        return { session };
+    } catch (error) {
+        console.error("GET SESSION ERROR:: ", error);
+    }
 };
