@@ -5,7 +5,6 @@ import { signInSchema, signUpSchema } from "@/modules/auth/validators/auth.valid
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-// ✅ SIGN IN
 export const signInUser = async (
     data: SignInUserData
 ): Promise<ActionResponse<any>> => {
@@ -53,7 +52,6 @@ export const signInUser = async (
     }
 };
 
-// ✅ SIGN UP
 export const signUpUser = async (data: SignUpUserData) => {
     const validated = signUpSchema.safeParse(data);
 
@@ -97,7 +95,6 @@ export const signUpUser = async (data: SignUpUserData) => {
     }
 };
 
-// ✅ SIGN OUT
 export const signOutUser = async () => {
     try {
         await auth.api.signOut({
@@ -108,7 +105,6 @@ export const signOutUser = async () => {
     }
 };
 
-// ✅ GET SESSION
 export const getSession = async () => {
     try {
         const session = await auth.api.getSession({
