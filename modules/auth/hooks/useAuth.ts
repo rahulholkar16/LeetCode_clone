@@ -10,9 +10,8 @@ export const useAuth = () => {
     const setUser = useAuthStore((s) => s.setUser);
     const logout = useAuthStore((s) => s.logout);
 
-    const queryClient = useQueryClient(); // ✅ correct
+    const queryClient = useQueryClient();
 
-    // ✅ SIGN IN
     const signInMutation = useMutation({
         mutationFn: signInUser,
 
@@ -24,7 +23,6 @@ export const useAuth = () => {
 
             toast.success(res.message);
 
-            // ✅ fetch session correctly
             const session = await queryClient.fetchQuery({
                 queryKey: ["session"],
                 queryFn: fetchSession,
@@ -40,7 +38,6 @@ export const useAuth = () => {
         },
     });
 
-    // ✅ SIGN UP
     const signUpMutation = useMutation({
         mutationFn: signUpUser,
 
@@ -54,14 +51,12 @@ export const useAuth = () => {
         },
     });
 
-    // ✅ SIGN OUT
     const signOutMutation = useMutation({
         mutationFn: signOutUser,
 
         onSuccess: async () => {
             logout();
 
-            // optional: clear cache
             queryClient.clear();
         },
     });
