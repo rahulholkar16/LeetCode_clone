@@ -10,7 +10,7 @@ import {
 } from "./ui/field";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { Loader2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -24,13 +24,7 @@ const SingInForm = () => {
         const password = String(formData.get("password"));
 
         try {
-            const result = await signIn({ email, password });
-
-            if (!result.success) {
-                toast.error(result.message);
-                return;
-            }
-
+            await signIn({ email, password });
             toast.success("User login successfully");
             router.push("/");
         } catch (error) {
@@ -39,7 +33,7 @@ const SingInForm = () => {
         }
     };
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 z-10">
             <Card className="overflow-hidden p-0">
                 <CardContent className="grid p-0">
                     <form

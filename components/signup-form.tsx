@@ -6,11 +6,11 @@ import {
     FieldDescription,
     FieldGroup,
     FieldLabel,
-    FieldSeparator
+    FieldSeparator,
 } from "./ui/field";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { Loader2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
