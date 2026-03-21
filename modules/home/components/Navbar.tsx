@@ -6,7 +6,6 @@ import { Code2, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { AvatarDropdown } from "./AvatarDrop";
-import { Role } from "@/types";
 
 const Navbar = () => {
     const user = useAuthStore(s => s.user);
@@ -58,7 +57,7 @@ const Navbar = () => {
                             {isLoggedIn ? (
                                 <>
                                     {/* ADMIN BUTTON */}
-                                    {user?.role === Role.ADMIN && (
+                                    {user?.role === "ADMIN" && (
                                         <Button
                                             asChild
                                             variant="outline"
