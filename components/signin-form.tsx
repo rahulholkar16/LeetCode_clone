@@ -13,20 +13,15 @@ import { toast } from "sonner";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { Loader2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
 
 const SingInForm = () => {
     const { signIn, isSigningIn } = useAuth();
-    const router = useRouter();
-
     const onSubmit = async (formData: FormData) => {
         const email = String(formData.get("email"));
         const password = String(formData.get("password"));
 
         try {
             await signIn({ email, password });
-            toast.success("User login successfully");
-            router.push("/");
         } catch (error) {
             toast.error("Something went wrong");
             console.error(error);
