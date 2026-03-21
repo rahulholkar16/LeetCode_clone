@@ -18,7 +18,7 @@ export function AvatarDropdown({ user }: AvatarDropdownProp) {
     };
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild className="flex items-center justify-center">
                 <Button variant="ghost" size="icon" className="rounded-full">
                     <Avatar>
                         {user?.image && (
