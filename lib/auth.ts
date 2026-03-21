@@ -21,5 +21,14 @@ export const auth = betterAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
         }
     },
-    plugins: [nextCookies()]
+    plugins: [nextCookies()],
+    user: {
+        additionalFields: {
+            role: {
+                type: ["USER", "ADMIN"],
+                required: false,
+                defaultValue: "USER",
+            }
+        }
+    }
 });
