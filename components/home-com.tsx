@@ -1,12 +1,11 @@
 "use client"
-import { authClient } from '@/lib/auth-client';
-import { useState } from 'react';
 import { Button } from './ui/button';
-import { useSession } from '@/modules/auth/hooks/useSession';
 import { useAuthStore } from '@/modules/auth/store/auth-store';
 import { signOutUser } from '@/modules/auth/api/auth.api';
+import { useSession } from '@/modules/auth/hooks/useSession';
 
 const HOME = () => {
+    useSession();
     const user = useAuthStore(s => s.user);
 
     const logoutHandel = async () => {
