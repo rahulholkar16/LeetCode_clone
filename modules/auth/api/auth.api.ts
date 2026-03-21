@@ -5,11 +5,8 @@ import { signInSchema, signUpSchema } from "@/modules/auth/validators/auth.valid
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
-export const signInUser = async (
-    data: SignInUserData
-): Promise<ActionResponse<any>> => {
+export const signInUser = async ( data: SignInUserData ): Promise<ActionResponse<any>> => {
     const validated = signInSchema.safeParse(data);
-
     if (!validated.success) {
         return {
             success: false,
@@ -66,7 +63,7 @@ export const signUpUser = async (data: SignUpUserData) => {
         const res = await auth.api.signUpEmail({
             body: {
                 ...validated.data,
-                callbackURL: "/", // ⚠️ server me window nahi hota
+                callbackURL: "/",
             },
             headers: await headers(),
             asResponse: true,
@@ -102,17 +99,5 @@ export const signOutUser = async () => {
         });
     } catch (error) {
         console.error("Error in SignOut:: ", error);
-    }
-};
-
-export const getSession = async () => {
-    try {
-        const session = await auth.api.getSession({
-            headers: await headers(),
-        });
-
-        return { session };
-    } catch (error) {
-        console.error("GET SESSION ERROR:: ", error);
     }
 };
