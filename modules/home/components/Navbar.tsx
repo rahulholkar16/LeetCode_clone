@@ -5,21 +5,23 @@ import { useAuthStore } from "@/modules/auth/store/auth-store";
 import { Code2, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { AvatarDropdown } from "./AvatarDrop";
+import { Role } from "@/types";
 
-const Navbar = ({ userRole }) => {
-    const { user } = useAuthStore();
-    const isLoggedIn = !!user;
+const Navbar = () => {
+    const user = useAuthStore(s => s.user);
+    const isLoggedIn = useAuthStore(s => s.isAuthenticated);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     return (
-        <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60">
+        <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60">
             <div className="max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
                     <Link
                         href="/"
-                        className="flex items-center gap-2 text-primary group flex-shrink-0"
+                        className="flex items-center gap-2 text-primary group shrink-0"
                     >
-                        <div className="p-2 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500">
+                        <div className="p-2 rounded-lg bg-linear-to-br from-yellow-400 to-orange-500">
                             <Code2 className="w-5 h-5 text-black" />
                         </div>
                         <span className="font-bold text-xl">CodeMaster</span>
@@ -48,16 +50,20 @@ const Navbar = ({ userRole }) => {
                     </div>
 
                     {/* Right Section */}
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center gap-3 shrink-0">
                         <ModeToggle />
 
                         {/* 🔐 AUTH LOGIC */}
-                        <div className="hidden md:flex items-center gap-2">
+                        <div className="hidden md:flex items-center gap-2 justify-center">
                             {isLoggedIn ? (
                                 <>
                                     {/* ADMIN BUTTON */}
-                                    {user?.role === userRole.ADMIN && (
-                                        <Button asChild variant="outline">
+                                    {user?.role === Role.ADMIN && (
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size={"lg"}
+                                        >
                                             <Link href="/create-problem">
                                                 Create Problem
                                             </Link>
@@ -65,9 +71,7 @@ const Navbar = ({ userRole }) => {
                                     )}
 
                                     {/* USER PROFILE */}
-                                    <Button asChild variant="ghost">
-                                        <Link href="/profile">Profile</Link>
-                                    </Button>
+                                    <AvatarDropdown user={user} />
                                 </>
                             ) : (
                                 <>
