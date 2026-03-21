@@ -14,6 +14,7 @@ import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { Loader2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { githubSignUp, googleSignUp } from "@/modules/auth/actions/auth-action";
 
 const SignUpForm = () => {
     const { signUp, isSigningUp } = useAuth();
@@ -35,6 +36,14 @@ const SignUpForm = () => {
             console.error("Error:: ", error);
         }
     };
+
+    const handleGoogle = async () => {
+            await googleSignUp();
+        };
+    
+        const handleGithub = async () => {
+            await githubSignUp();
+        };
 
     return (
         <div className="flex flex-col gap-6">
@@ -133,7 +142,7 @@ const SignUpForm = () => {
                                 Or continue with
                             </FieldSeparator>
                             <Field className="grid grid-cols-2 gap-4">
-                                <Button variant="outline" type="button">
+                                <Button variant="outline" type="button" onClick={handleGoogle}>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 24 24"
@@ -147,7 +156,7 @@ const SignUpForm = () => {
                                         Sign up with Google
                                     </span>
                                 </Button>
-                                <Button variant="outline" type="button">
+                                <Button variant="outline" type="button" onClick={handleGithub}>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 640 640"
