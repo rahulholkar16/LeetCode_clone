@@ -14,11 +14,12 @@ enum UserRole {
 
 model User {
   id            String    @id
-  name          String  
+  name          String
   email         String
   emailVerified Boolean   @default(false)
   image         String?
   role          UserRole  @default(USER)
+  problems      Problem[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
@@ -74,4 +75,87 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+model Problem {
+  id                String     @id @default(uuid())
+  title             String
+  description       String
+  difficulty        Difficulty
+  constraints       String
+  hints             String?
+  editorial         String?
+
+  userId            String
+  user              User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  tags              ProblemTag[]
+  examples          Example[]
+  testCases         TestCase[]
+  snippets          CodeSnippet[]
+  solutions         ReferenceSolution[]
+
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+
+  problems ProblemTag[]
+}
+
+model ProblemTag {
+  problemId String
+  tagId     String
+
+  problem Problem @relation(fields: [problemId], references: [id])
+  tag     Tag     @relation(fields: [tagId], references: [id])
+
+  @@id([problemId, tagId])
+}
+
+model Example {
+  id          String  @id @default(uuid())
+  input       String
+  output      String
+  explanation String?
+
+  problemId   String
+  problem     Problem @relation(fields: [problemId], references: [id])
+}
+
+model TestCase {
+  id        String  @id @default(uuid())
+  input     String
+  output    String
+  isHidden  Boolean @default(true)
+
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id])
+}
+
+model CodeSnippet {
+  id        String @id @default(uuid())
+  language  String
+  code      String
+
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id])
+}
+
+model ReferenceSolution {
+  id        String @id @default(uuid())
+  language  String
+  code      String
+
+  problemId String
+  problem   Problem @relation(fields: [problemId], references: [id])
 }
