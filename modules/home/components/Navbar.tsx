@@ -9,6 +9,7 @@ import { AvatarDropdown } from "./AvatarDrop";
 
 const Navbar = () => {
     const user = useAuthStore(s => s.user);
+    console.log("USERSSS", user);
     const isLoggedIn = useAuthStore(s => s.isAuthenticated);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     return (
@@ -129,7 +130,7 @@ const Navbar = () => {
                         <div className="pt-2 space-y-2">
                             {isLoggedIn ? (
                                 <>
-                                    {user?.role === userRole.ADMIN && (
+                                    {user?.role === "ADMIN" && (
                                         <Button asChild className="w-full">
                                             <Link href="/create-problem">
                                                 Create Problem

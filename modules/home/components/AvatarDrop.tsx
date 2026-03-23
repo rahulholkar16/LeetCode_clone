@@ -2,12 +2,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
+    DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuGroup,
-    DropdownMenuItem,
     DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+    DropdownMenuItem,
+} from "@radix-ui/react-dropdown-menu";
 import { useAuth } from "@/modules/auth/hooks/useAuth";
 import { AvatarDropdownProp } from "@/types";
 
