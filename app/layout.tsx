@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/provider/query-provider";
 import { CircleX } from "lucide-react";
 import { ThemeProvider } from "@/components/provider/theme-provider";
+import { useSession } from "@/modules/auth/hooks/useSession";
+import AuthLayer from "@/modules/auth/components/auth-layer";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -24,8 +26,13 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
+    useSession();
     return (
-        <html lang="en" className={cn("font-sans", geist.variable)} suppressHydrationWarning>
+        <html
+            lang="en"
+            className={cn("font-sans", geist.variable)}
+            suppressHydrationWarning
+        >
             <body className={`${inter} antialiased`}>
                 <ThemeProvider
                     attribute="class"
@@ -33,7 +40,9 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
-                    <QueryProvider>{children}</QueryProvider>
+                    <QueryProvider>
+                        <AuthLayer>{children}</AuthLayer>
+                    </QueryProvider>
                 </ThemeProvider>
                 <Toaster
                     icons={{
