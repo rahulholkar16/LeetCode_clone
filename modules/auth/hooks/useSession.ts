@@ -1,3 +1,4 @@
+"use client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useAuthStore } from "@/modules/auth/store/auth-store";

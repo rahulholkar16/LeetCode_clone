@@ -1,3 +1,5 @@
+"use client";
+
 import { AuthLayerProp } from '@/types';
 import { useSession } from '../hooks/useSession'
 
@@ -8,4 +10,4 @@ const AuthLayer = ({ children }: AuthLayerProp) => {
     )
 }
 
-export default AuthLayer
+export default AuthLayer;
