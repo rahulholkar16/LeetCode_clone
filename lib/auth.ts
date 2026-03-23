@@ -13,10 +13,12 @@ export const auth = betterAuth({
     },
     socialProviders: {
         github: {
+            prompt: "select_account",
             clientId: process.env.GITHUB_CLIENT_ID as string,
             clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
         },
         google: {
+            prompt: "select_account",
             clientId: process.env.GOOGLE_CLIENT_ID as string,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
         }
@@ -26,7 +28,7 @@ export const auth = betterAuth({
         additionalFields: {
             role: {
                 type: ["USER", "ADMIN"],
-                required: false,
+                required: true,
                 defaultValue: "USER",
             }
         }
