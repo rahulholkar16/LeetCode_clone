@@ -4,15 +4,13 @@ interface QueryProviderProp {
     children: ReactNode;
 }
 
-interface SignUpUserData {
-    email: string;
-    password: string;
-    name: string;
-}
-
 interface SignInUserData {
     email: string;
     password: string;
+}
+
+interface SignUpUserData extends SignInUserData {
+    name: string;
 }
 
 type ActionResponse<T> = {
@@ -21,6 +19,8 @@ type ActionResponse<T> = {
     message?: string;
 };
 
+export type Role = "USER" | "ADMIN";
+
 interface USER {
     id: string;
     createdAt: Date;
@@ -28,7 +28,8 @@ interface USER {
     email: string;
     emailVerified: boolean;
     name: string;
-    image ?: string | null | undefined;
+    image?: string | null | undefined;
+    role: Role;
 };
 
 type AuthState = {
@@ -37,3 +38,23 @@ type AuthState = {
     setUser: (user: USER | null) => void;
     logout: () => void;
 };
+
+interface RootLayoutProp {
+    children: ReactNode;
+}
+
+interface AvatarDropdownProp {
+    user: USER | null;
+}
+
+interface AuthLayerProp {
+    children: ReactNode
+}
+
+interface ProtectedLayerProp {
+    children: ReactNode
+}
+
+interface ProtectedLayoutProp {
+    children: ReactNode
+}
