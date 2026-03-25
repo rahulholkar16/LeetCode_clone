@@ -1,4 +1,4 @@
-import { SUBMISSION, SubmitBatchResponse } from '@/types';
+import { Judge0Result, Submission, SubmitBatchResponse } from '@/types';
 import axios from 'axios';
 
 export function getJudge0LanguageId(language: string): number {
@@ -13,23 +13,22 @@ export function getJudge0LanguageId(language: string): number {
     return languageMap[language.toUpperCase()];
 };
 
-export async function submitBatch(submission: Array<SUBMISSION>): Promise<SubmitBatchResponse> {
+export async function submitBatch(submission: Array<Submission>): Promise<SubmitBatchResponse> {
     const { data } = await axios.post(
-        `${process.env.JUDGE0_API}/submissions/batch?base64_encoded=false`,
+        `http://judge0-server:2358/submissions/batch?base64_encoded=false`,
         {
             submissions: submission,
         }
     );
-    console.log("data");
     return data;
-}
+};
 
-export async function pollBatchResults(tokens: Array<string>) {
-    let results;
+export async function pollBatchResults(tokens: Array<string>): Promise<Judge0Result[]> {
+    let results: Judge0Result[];
     for (let i = 0; i < 10; i++) {
         const res = await axios.get(
-            `${process.env.JUDGE0_API}/submissions/batch?tokens=${tokens.join(",")}&base64_encoded=false`
-        );
+            `http://judge0-server:2358/submissions/batch?tokens=${tokens.join(",")}&base64_encoded=false`
+        ); 
 
         results = res.data.submissions;
 
