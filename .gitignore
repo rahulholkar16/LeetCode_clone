@@ -44,3 +44,4 @@ next-env.d.ts
 /prisma/generated
 .gitignore
 .dockerignore
+Dockerfile.studio

@@ -98,6 +98,23 @@ services:
     restart: unless-stopped
     <<: *default-logging
 
+  # 🔵 Prisma Studio
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile.studio
+      args:
+        DATABASE_URL: ${DATABASE_URL}
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    depends_on:
+      app-db:
+        condition: service_healthy
+    ports:
+      - "5555:5555"
+    restart: unless-stopped
+    <<: *default-logging
+
 volumes:
   app_db_data:
   judge0_db_data:

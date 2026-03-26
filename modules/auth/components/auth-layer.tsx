@@ -1,9 +1,9 @@
 "use client";
 
-import { AuthLayerProp } from '@/types';
+import { ChildrenProps } from '@/types';
 import { useSession } from '../hooks/useSession'
 
-const AuthLayer = ({ children }: AuthLayerProp) => {
+const AuthLayer = ({ children }: ChildrenProps) => {
     useSession();
     return (
         <>{children}</>

@@ -1,11 +1,11 @@
 "use client";
 
 import { useAuthStore } from "@/modules/auth/store/auth-store";
-import { ProtectedLayerProp } from "@/types";
+import { ChildrenProps } from "@/types";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export const ProtectedLayer = ({ children }: ProtectedLayerProp) => {
+export const ProtectedLayer = ({ children }: ChildrenProps) => {
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
     const router = useRouter();
 
