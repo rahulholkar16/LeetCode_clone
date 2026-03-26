@@ -23,6 +23,7 @@ import {
     InternalTestCase,
     TestCase,
 } from "@/types";
+import { useProblem } from "../../hooks/useProblem";
 
 export function CreateProblemView() {
     // SAMPLE
@@ -140,12 +141,9 @@ solve();`,
     };
 
 
-
+    const { createProblem, isCreateProblem: isLoading } = useProblem();
     const router = useRouter();
     const isAdmin = useAuthStore((s) => s.user?.role === "ADMIN");
-
-    const [isLoading, setIsLoading] = useState(false);
-
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -299,7 +297,6 @@ solve();`,
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setIsLoading(true);
 
         try {
             const codeSnippetsRecord = codeSnippets.reduce(
@@ -309,11 +306,6 @@ solve();`,
                 },
                 {} as Record<string, string>,
             );
-
-            const constraintsArray = formData.constraints
-                .split("\n")
-                .map((c) => c.trim())
-                .filter(Boolean);
 
             const body = {
                 title: formData.title,
@@ -333,17 +325,11 @@ solve();`,
 
             console.log("Problem created:", body);
 
-            await fetch("/api/create-problem", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body),
-            });
+            // api
+            await createProblem(body);
 
-            router.push("/");
         } catch (error) {
             console.error("Error creating problem:", error);
-        } finally {
-            setIsLoading(false);
         }
     };
 
