@@ -321,7 +321,7 @@ solve();`,
                 difficulty: formData.difficulty,
                 tags,
                 examples: examples.map(({ id, ...rest }) => rest),
-                constraints: constraintsArray,
+                constraints: formData.constraints,
                 testCases: testCases.map(
                     ({ id, explanation, ...rest }) => rest,
                 ),
