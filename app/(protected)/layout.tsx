@@ -1,7 +1,7 @@
 import { ProtectedLayer } from "@/modules/auth/components/protected-layer";
-import { ProtectedLayoutProp } from "@/types";
+import { ChildrenProps } from "@/types";
 
-const ProtectedLayout = ({ children }: ProtectedLayoutProp) => {
+const ProtectedLayout = ({ children }: ChildrenProps) => {
     return <ProtectedLayer>{children}</ProtectedLayer>;
 };
 

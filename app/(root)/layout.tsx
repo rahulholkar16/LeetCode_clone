@@ -1,8 +1,8 @@
 import { Footer } from "@/modules/home/components/Footer";
 import Navbar from "@/modules/home/components/Navbar";
-import { RootLayoutProp } from "@/types";
+import { ChildrenProps } from "@/types";
 
-const RootLayout = ({children}: RootLayoutProp) => {
+const RootLayout = ({children}: ChildrenProps) => {
   return (
     <main className="flex flex-col min-h-screen max-h-screen">
         {/* { Navbar } */}
