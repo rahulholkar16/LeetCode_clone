@@ -1,20 +1,9 @@
 "use server";
 
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { headers } from "next/headers";
 
 export const getAllProblem = async () => {
     try {
-        const session = await auth.api.getSession({
-            headers: await headers(),
-        });
-
-        if (!session) return {
-            success: false,
-            message: "Unauthorized",
-        }
-
         const problems = await db.problem.findMany({
             orderBy: {
                 createdAt: "desc",
