@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getJudge0LanguageId, pollBatchResults, submitBatch } from "@/lib/judge0";
-import { Problem } from "@/types";
+import { CreateProblemInput } from "@/types";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
         }
 
-        const body = (await request.json()) as Problem;
+        const body = (await request.json()) as CreateProblemInput;
         const { title, description, difficulty, tags, examples, constraints, testCases, codeSnippets, referenceSolution } = body;
         if (!title || !description || !difficulty || !testCases || !codeSnippets || !referenceSolution) return NextResponse.json({ success: false, error: "Missing field required" }, { status: 400 });
         if (!Array.isArray(testCases) || testCases.length === 0) return NextResponse.json({ success: false, error: "At least one test case is required" }, { status: 400 });
