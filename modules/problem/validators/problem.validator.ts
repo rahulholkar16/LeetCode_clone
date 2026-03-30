@@ -12,21 +12,24 @@ export const problemSchema = z.object({
         z.object({
             input: z.string().min(1, { message: "Input is required." }),
             output: z.string().min(1, { message: "Output is required." }),
+            isHidden: z.boolean().optional()
         })
     ).min(1, "At least 1 test case is required."),
-    examples: z.object({
-        input: z.string().min(1, "Input is required."),
-        output: z.string().min(1, { message: "Output is required." }),
-        explanation: z.string().optional()
-    }),
+    examples: z.array(
+        z.object({
+            input: z.string().min(1, "Input is required."),
+            output: z.string().min(1, { message: "Output is required." }),
+            explanation: z.string().optional()
+        })
+    ).min(1, "At least 1 example is required."),
     codeSnippets: z.object({
-        JAVASCRIPT: z.string().min(1, { message: "JavaScript code snippet is required." }),
-        PYTHON: z.string().min(1, { message: "Python code snippet is required." }),
-        JAVA: z.string().min(1, { message: "Java code snippet is required." }),
+        JAVASCRIPT: z.string().min(1, { message: "JavaScript code snippet is required." }).optional(),
+        PYTHON: z.string().min(1, { message: "Python code snippet is required." }).optional(),
+        JAVA: z.string().min(1, { message: "Java code snippet is required." }).optional(),
     }),
     referenceSolutions: z.object({
-        JAVASCRIPT: z.string().min(1, { message: "JavaScript solution is required." }),
-        PYTHON: z.string().min(1, { message: "Python solution is required." }),
-        JAVA: z.string().min(1, { message: "Java solution is required." }),
+        JAVASCRIPT: z.string().min(1, { message: "JavaScript solution is required." }).optional(),
+        PYTHON: z.string().min(1, { message: "Python solution is required." }).optional(),
+        JAVA: z.string().min(1, { message: "Java solution is required." }).optional(),
     }),
 });
