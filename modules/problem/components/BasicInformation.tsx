@@ -1,24 +1,93 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { BasicInformationProps, Difficulty } from "@/types";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Difficulty } from "@/types";
 import { X } from "lucide-react";
+import { useUiProblmStore } from "../stores/problem-ui-store";
+import { useEffect, useState } from "react";
 
+export function BasicInformation() {
+    const setTitle = useUiProblmStore((s) => s.setTitle);
+    const title = useUiProblmStore((s) => s.title);
+    const [localTitle, setLocalTitle] = useState(title);
 
-export function BasicInformation({
-    title,
-    difficulty,
-    tags,
-    tagInput,
-    onTitleChange,
-    onDifficultyChange,
-    onTagInputChange,
-    onAddTag,
-    onRemoveTag,
-    onTagKeyPress,
-}: BasicInformationProps) {
+    const tags = useUiProblmStore((s) => s.tags);
+    const setTag = useUiProblmStore((s) => s.setTag);
+    const removeTag = useUiProblmStore((s) => s.removeTag); 
+    const [localTags, setLocalTags] = useState(tags); 
+    const [tagInput, setTagInput] = useState("");
+
+    const difficulty = useUiProblmStore((s) => s.difficulty);
+    const setDifficulty = useUiProblmStore((s) => s.setDifficulty);
+
+    useEffect(() => {
+        setLocalTags(tags);
+    }, [tags]);
+
+    /** 
+     * Debounce title → store 
+    */
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setTitle(localTitle);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [localTitle, setTitle]);
+
+    /** 
+     * Difficulty change handler 
+    */
+    function onDifficultyChange(value: Difficulty) {
+        setDifficulty(value);
+    }
+
+    /** 
+     * Add tag on Enter / comma 
+    */
+    function onTagKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
+        if (e.key === "Enter" || e.key === ",") {
+            const newTag = tagInput.replace(",", "").trim();
+            if (newTag) {
+                setTag(newTag);
+                setTagInput("");
+            }
+        }
+    }
+
+    /** 
+     * Add tag via button 
+    */
+    function onAddTag() {
+        const newTag = tagInput.trim();
+        if (newTag) {
+            setTag(newTag);
+            setTagInput("");
+        }
+    }
+
+    /** 
+     * Remove a tag 
+    */
+    function onRemoveTag(tag: string) {
+        removeTag(tag);
+    }
+
     return (
         <Card>
             <CardHeader>
@@ -33,8 +102,8 @@ export function BasicInformation({
                     <Input
                         id="title"
                         placeholder="e.g., Two Sum"
-                        value={title}
-                        onChange={(e) => onTitleChange(e.target.value)}
+                        value={localTitle}
+                        onChange={(e) => setLocalTitle(e.target.value)}
                         required
                     />
                 </div>
@@ -44,7 +113,7 @@ export function BasicInformation({
                     <Select
                         value={difficulty}
                         onValueChange={(value) => {
-                            if (value) onDifficultyChange(value as Difficulty)
+                            if (value) onDifficultyChange(value as Difficulty);
                         }}
                     >
                         <SelectTrigger>
@@ -65,7 +134,7 @@ export function BasicInformation({
                             id="tags"
                             placeholder="e.g., Array, Hash Table"
                             value={tagInput}
-                            onChange={(e) => onTagInputChange(e.target.value)}
+                            onChange={(e) => setTagInput(e.target.value)}
                             onKeyUp={onTagKeyPress}
                         />
                         <Button
@@ -77,7 +146,7 @@ export function BasicInformation({
                         </Button>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
-                        {tags.map((tag, index) => (
+                        {localTags.map((tag, index) => (
                             <div
                                 key={index}
                                 className="flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
@@ -97,4 +166,4 @@ export function BasicInformation({
             </CardContent>
         </Card>
     );
-}
+};

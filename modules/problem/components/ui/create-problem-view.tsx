@@ -33,110 +33,34 @@ export function CreateProblemView() {
             "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
         difficulty: "EASY" as const,
         tags: ["Array", "Hash Table"],
+        constraints:
+            "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9\nOnly one valid answer exists.",
         examples: [
             {
-                id: crypto.randomUUID(),
+                id: 1,
                 input: "nums = [2,7,11,15], target = 9",
                 output: "[0,1]",
                 explanation: "Because nums[0] + nums[1] == 9, we return [0,1].",
             },
             {
-                id: crypto.randomUUID(),
+                id: 2,
                 input: "nums = [3,2,4], target = 6",
                 output: "[1,2]",
                 explanation: "Because nums[1] + nums[2] == 6, we return [1,2].",
             },
         ],
-        constraints:
-            "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9\nOnly one valid answer exists.",
         testCases: [
-            {
-                id: crypto.randomUUID(),
-                input: "4\n2 7 11 15\n9",
-                output: "0 1",
-                isHidden: false,
-            },
-            {
-                id: crypto.randomUUID(),
-                input: "3\n3 2 4\n6",
-                output: "1 2",
-                isHidden: false,
-            },
-            {
-                id: crypto.randomUUID(),
-                input: "2\n3 3\n6",
-                output: "0 1",
-                isHidden: true,
-            },
+            { input: "4\n2 7 11 15\n9", output: "0 1", isHidden: false },
+            { input: "3\n3 2 4\n6", output: "1 2", isHidden: false },
+            { input: "2\n3 3\n6", output: "0 1", isHidden: true },
         ],
-        codeSnippets: [
-            {
-                id: crypto.randomUUID(),
-                language: "PYTHON",
-                code: `def solve():
-    n = int(input())
-    nums = list(map(int, input().split()))
-    target = int(input())
-
-    # Write your code here
-
-if __name__ == "__main__":
-    solve()`,
-            },
-            {
-                id: crypto.randomUUID(),
-                language: "JAVASCRIPT",
-                code: `function solve() {
-  const fs = require("fs");
-  const input = fs.readFileSync(0, "utf-8").trim().split("\\n");
-
-  const n = parseInt(input[0]);
-  const nums = input[1].split(" ").map(Number);
-  const target = parseInt(input[2]);
-
-  // Write your code here
-}
-
-solve();`,
-            },
-        ],
-        referenceSolution: {
-            PYTHON: `def solve():
-    n = int(input())
-    nums = list(map(int, input().split()))
-    target = int(input())
-
-    mp = {}
-    for i in range(n):
-        diff = target - nums[i]
-        if diff in mp:
-            print(mp[diff], i)
-            return
-        mp[nums[i]] = i
-
-if __name__ == "__main__":
-    solve()`,
-            JAVASCRIPT: `function solve() {
-  const fs = require("fs");
-  const input = fs.readFileSync(0, "utf-8").trim().split("\\n");
-
-  const n = parseInt(input[0]);
-  const nums = input[1].split(" ").map(Number);
-  const target = parseInt(input[2]);
-
-  const mp = new Map();
-
-  for (let i = 0; i < n; i++) {
-    const diff = target - nums[i];
-    if (mp.has(diff)) {
-      console.log(mp.get(diff), i);
-      return;
-    }
-    mp.set(nums[i], i);
-  }
-}
-
-solve();`,
+        codeSnippets: {
+            PYTHON: `def solve():\n    ...`,
+            JAVASCRIPT: `function solve() {\n    ...}\nsolve();`,
+        },
+        referenceSolutions: {
+            PYTHON: `def solve():\n    ...\nif __name__ == "__main__":\n    solve()`,
+            JAVASCRIPT: `function solve() {\n    ...\n}\nsolve();`,
         },
     };
 
@@ -286,7 +210,7 @@ solve();`,
             description: sampleProblem.description,
             difficulty: sampleProblem.difficulty,
             constraints: sampleProblem.constraints,
-            referenceSolution: sampleProblem.referenceSolution.JAVASCRIPT,
+            referenceSolution: sampleProblem.referenceSolutions.JAVASCRIPT,
         });
 
         setTags(sampleProblem.tags);
