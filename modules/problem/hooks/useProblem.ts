@@ -1,11 +1,9 @@
 import { useMutation } from "@tanstack/react-query"
 import { createProblem } from "../api/create.api";
 import { toast } from "sonner";
-import { useProblmStore } from "../stores/problem-store";
 import { useRouter } from "next/navigation";
 
 export const useProblem = () => {
-    const setProblem = useProblmStore(s => s.setProblem);
     const router = useRouter();
     const createProblemMutation = useMutation({
         mutationFn: createProblem,
