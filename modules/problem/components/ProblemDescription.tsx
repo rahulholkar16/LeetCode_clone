@@ -7,7 +7,10 @@ import { useUiProblmStore } from "../stores/problem-ui-store";
 export function ProblemDescription() {
     const description = useUiProblmStore(s => s.description);
     const setDescription = useUiProblmStore(s => s.setDescription);
-    const [localDescription, setLoaclDescription] = useState(description)
+    const [localDescription, setLoaclDescription] = useState(description);
+    const constraints = useUiProblmStore(s => s.constraints);
+    const setConstraints = useUiProblmStore(s => s.setConstraints);
+    const [locatConstraints, setLocalConstraints] = useState(constraints);
     
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -15,6 +18,14 @@ export function ProblemDescription() {
         }, 500);
         return () => clearTimeout(timer);
     }, [localDescription, setDescription]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setConstraints(locatConstraints);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [locatConstraints, setConstraints]);
     
     return (
         <Card>
@@ -43,7 +54,7 @@ export function ProblemDescription() {
                         id="constraints"
                         placeholder="• 2 ≤ nums.length ≤ 10⁴&#10;• -10⁹ ≤ nums[i] ≤ 10⁹&#10;• -10⁹ ≤ target ≤ 10⁹"
                         value={constraints}
-                        onChange={(e) => onConstraintsChange(e.target.value)}
+                        onChange={(e) => setLocalConstraints(e.target.value)}
                         rows={5}
                         required
                     />
