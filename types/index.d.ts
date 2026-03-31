@@ -98,6 +98,7 @@ interface CreateProblem {
     diffculty: Difficulty;
     tags: Array<string>;
     description: string;
+    constraints: string;
 }
 
 interface ProblemUIStore {
@@ -105,6 +106,7 @@ interface ProblemUIStore {
     difficulty: Difficulty;
     tags: Array<string> | [];
     description: string;
+    constraints: string;
 
     setTitle: (title: string) => void;
     setTag: (tag: string) => void;
@@ -112,4 +114,5 @@ interface ProblemUIStore {
     removeTag: (tag: string) => void;
 
     setDescription: (description: string) => void;
+    setConstraints: (constraints: string) => void;
 }
