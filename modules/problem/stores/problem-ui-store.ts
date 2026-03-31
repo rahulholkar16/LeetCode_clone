@@ -5,6 +5,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     title: "",
     difficulty: Difficulty.MEDIUM,
     tags: [],
+    description: "",
 
     setTitle: (title) => set({ title }),
     setTag: (tag) => set((state) => ({
@@ -16,4 +17,6 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     removeTag: (tag) => set((state) => ({
         tags: state.tags.filter((t) => t !== tag),
     })),
+
+    setDescription: (description) => set({ description }),
 }));
