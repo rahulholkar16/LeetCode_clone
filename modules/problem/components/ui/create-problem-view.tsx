@@ -57,7 +57,7 @@ export function CreateProblemView() {
 
     const title = useUiProblmStore(s => s.title);
     const tags = useUiProblmStore(s => s.tags);
-    co
+    const difficulty = useUiProblmStore(s => s.difficulty);
 
     const { createProblem, isCreateProblem: isLoading } = useProblem();
     const router = useRouter();
@@ -181,9 +181,9 @@ export function CreateProblemView() {
             );
 
             const body = {
-                title: formData.title,
+                title: title,
                 description: formData.description,
-                difficulty: formData.difficulty,
+                difficulty: difficulty,
                 tags,
                 examples: examples.map(({ id, ...rest }) => rest),
                 constraints: formData.constraints,
