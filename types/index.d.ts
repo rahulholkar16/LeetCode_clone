@@ -93,12 +93,20 @@ enum Difficulty {
     HARD
 }
 
+interface Example {
+    id: string;
+    input: string;
+    output: string;
+    explanation: string;
+}
+
 interface CreateProblem {
     title: string;
     diffculty: Difficulty;
     tags: Array<string>;
     description: string;
     constraints: string;
+    examples: Example[];
 }
 
 interface ProblemUIStore {
@@ -107,6 +115,7 @@ interface ProblemUIStore {
     tags: Array<string> | [];
     description: string;
     constraints: string;
+    examples: Example[];
 
     setTitle: (title: string) => void;
     setTag: (tag: string) => void;
@@ -115,4 +124,12 @@ interface ProblemUIStore {
 
     setDescription: (description: string) => void;
     setConstraints: (constraints: string) => void;
+
+    addExample: () => void;
+    removeExample: (id: string) => void;
+    updateExample: (
+        id: string,
+        field: keyof Omit<Example, "id">,
+        value: string
+    ) => void;
 }
