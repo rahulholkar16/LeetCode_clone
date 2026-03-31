@@ -1,5 +1,11 @@
-import { Difficulty, ProblemUIStore } from "@/types";
+import { Difficulty, Example, ProblemUIStore } from "@/types";
 import { create } from "zustand";
+
+const emptyExample: Example = {
+    input: "",
+    output: "",
+    explanation: "",
+};
 
 export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     title: "",
@@ -7,6 +13,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     tags: [],
     description: "",
     constraints: "",
+    examples: [emptyExample],
 
     setTitle: (title) => set({ title }),
     setTag: (tag) => set((state) => ({
@@ -21,4 +28,8 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
 
     setDescription: (description) => set({ description }),
     setConstraints: (constraints) => set({ constraints }),
+
+    addExample: (example) => set((state) => ({
+        examples: [...state.examples, example],
+    })),
 }));
