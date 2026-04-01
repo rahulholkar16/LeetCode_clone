@@ -58,18 +58,15 @@ export function CreateProblemView() {
     const title = useUiProblmStore(s => s.title);
     const tags = useUiProblmStore(s => s.tags);
     const difficulty = useUiProblmStore(s => s.difficulty);
+    const description = useUiProblmStore(s => s.description);
+    const constraints = useUiProblmStore((s) => s.constraints);
+    const examples = useUiProblmStore(s => s.examples);
+    const testCases = useUiProblmStore(s => s.testCases);
 
     const { createProblem, isCreateProblem: isLoading } = useProblem();
     const router = useRouter();
     const isAdmin = useAuthStore((s) => s.user?.role === "ADMIN");
-    
-    const [examples, setExamples] = useState<InternalExample[]>([
-        { id: "1", input: "", output: "", explanation: "" },
-    ]);
 
-    const [testCases, setTestCases] = useState<InternalTestCase[]>([
-        { id: "1", input: "", output: "", explanation: "", isHidden: false },
-    ]);
 
     const [codeSnippets, setCodeSnippets] = useState<InternalCodeSnippet[]>([
         { id: "1", language: "javascript", code: "" },
@@ -82,65 +79,6 @@ export function CreateProblemView() {
     }, [isAdmin, router]);
 
     if (!isAdmin) return null;
-
-    // Examples
-    const addExample = () => {
-        setExamples([
-            ...examples,
-            {
-                id: Date.now().toString(),
-                input: "",
-                output: "",
-                explanation: "",
-            },
-        ]);
-    };
-
-    const removeExample = (id: string) => {
-        if (examples.length > 1) {
-            setExamples(examples.filter((ex) => ex.id !== id));
-        }
-    };
-
-    const updateExample = (id: string, field: keyof Example, value: string) => {
-        setExamples(
-            examples.map((ex) =>
-                ex.id === id ? { ...ex, [field]: value } : ex,
-            ),
-        );
-    };
-
-    // Test Cases
-    const addTestCase = () => {
-        setTestCases([
-            ...testCases,
-            {
-                id: Date.now().toString(),
-                input: "",
-                output: "",
-                explanation: "",
-                isHidden: false,
-            },
-        ]);
-    };
-
-    const removeTestCase = (id: string) => {
-        if (testCases.length > 1) {
-            setTestCases(testCases.filter((tc) => tc.id !== id));
-        }
-    };
-
-    const updateTestCase = (
-        id: string,
-        field: keyof TestCase | "explanation",
-        value: string | boolean,
-    ) => {
-        setTestCases(
-            testCases.map((tc) =>
-                tc.id === id ? { ...tc, [field]: value } : tc,
-            ),
-        );
-    };
 
     // Code Snippets
     const addCodeSnippet = () => {
@@ -168,7 +106,7 @@ export function CreateProblemView() {
         );
     };
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
@@ -182,14 +120,12 @@ export function CreateProblemView() {
 
             const body = {
                 title: title,
-                description: formData.description,
+                description: description,
                 difficulty: difficulty,
                 tags,
                 examples: examples.map(({ id, ...rest }) => rest),
-                constraints: formData.constraints,
-                testCases: testCases.map(
-                    ({ id, explanation, ...rest }) => rest,
-                ),
+                constraints: constraints,
+                testCases: testCases.map(({ id, ...rest }) => rest),
                 codeSnippets: codeSnippetsRecord,
                 referenceSolution: {
                     javascript: formData.referenceSolution,
@@ -222,30 +158,14 @@ export function CreateProblemView() {
                     {/* Basic Info Form */}
                     <BasicInformation />
 
-                    <ProblemDescription
-                        description={formData.description}
-                        constraints={formData.constraints}
-                        onDescriptionChange={(value) =>
-                            setFormData({ ...formData, description: value })
-                        }
-                        onConstraintsChange={(value) =>
-                            setFormData({ ...formData, constraints: value })
-                        }
-                    />
+                    {/* Problem Description Form */}
+                    <ProblemDescription />
 
-                    <ExamplesSection
-                        examples={examples}
-                        onAddExample={addExample}
-                        onRemoveExample={removeExample}
-                        onUpdateExample={updateExample}
-                    />
+                    {/* Example Section Form */}
+                    <ExamplesSection />
 
-                    <TestCasesSection
-                        testCases={testCases}
-                        onAddTestCase={addTestCase}
-                        onRemoveTestCase={removeTestCase}
-                        onUpdateTestCase={updateTestCase}
-                    />
+                    {/* Test Case Form */}
+                    <TestCasesSection />
 
                     <CodeSnippetsSection
                         codeSnippets={codeSnippets}

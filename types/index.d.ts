@@ -124,7 +124,7 @@ interface ProblemUIStore {
     description: string;
     constraints: string;
     examples: Example[];
-    testCase: TestCase[];
+    testCases: TestCase[];
 
     setTitle: (title: string) => void;
     setTag: (tag: string) => void;
@@ -143,4 +143,6 @@ interface ProblemUIStore {
     ) => void;
 
     addTestCase: () => void;
+    updateTestCase: (id: string, field: keyof Omit<TestCase, "id">, value: string | boolean) => void;
+    removeTestCase: (id: string) =>  void;
 }

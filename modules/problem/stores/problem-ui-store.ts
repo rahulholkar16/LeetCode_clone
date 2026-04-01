@@ -22,7 +22,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     description: "",
     constraints: "",
     examples: [createEmptyExample()],
-    testCase: [createEmptyTestCase()],
+    testCases: [createEmptyTestCase()],
 
     setTitle: (title) => set({ title }),
     setTag: (tag) => set((state) => ({
@@ -54,7 +54,13 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     })),
 
     addTestCase: () => set((state) => ({
-        testCase: [...state.testCase, createEmptyTestCase()],
+        testCases: [...state.testCases, createEmptyTestCase()],
     })),
-    
+    updateTestCase: (id, field, value) => set((state) => ({
+        testCases: state.testCases.map((testCase) => testCase.id === id ? {...testCase, [field]: value} : testCase)
+    })),
+    removeTestCase: (id) => set((state) => ({
+        testCases: state.testCases.length  > 1 ? state.testCases.filter((testCase) => testCase.id !== id) : state.testCases
+    })),
+
 }));
