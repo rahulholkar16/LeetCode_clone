@@ -87,53 +87,60 @@ export interface PollBatchResponse {
  * Problem Types 
 */
 
-enum Difficulty {
-    EASY,
-    MEDIUM,
-    HARD
-}
+export type Tag = {
+    tag: {
+        id: string;
+        name: string;
+    };
+};
 
-type Language = "Javascript" | "Java" | "Cpp" |  "Python";
+export type Difficulty = "EASY" | "MEDIUM" | "HARD";
 
-interface Example {
+export type Language = "Javascript" | "Java" | "Cpp" |  "Python";
+
+export interface Example {
     id: string;
     input: string;
     output: string;
     explanation: string;
+    problemId?: string;
 }
 
-interface TestCase {
+export interface TestCase {
     id: string;
     input: string;
     output: string;
     isHidden: boolean;
+    problemId?: string;
 }
 
-interface CodeSnippet {
+export interface CodeSnippet {
     id: string;      
     language: Language;  
-    code: string;      
+    code: string;
+    problemId?: string;      
 }
 
-interface ReferenceSolution {
+export interface ReferenceSolution {
     id: string;
     language: Language;
     code: string;
+    problemId?: string;
 }
 
-interface CreateProblem {
+export interface CreateProblem {
     title: string;
-    diffculty: Difficulty;
+    difficulty: Difficulty;
     tags: Array<string>;
     description: string;
     constraints: string;
-    examples: Example[];
-    testCase: TestCase[];
-    codeSnippets: CodeSnippet[];
-    referenceSolutions: ReferenceSolution[];
+    examples: Omit<Example, "id" | "problemId">[]; 
+    testCases: Omit<TestCase, "id" | "problemId">[];
+    codeSnippets: Record<string, string>;
+    referenceSolutions: Record<string, string>;
 }
 
-interface ProblemUIStore {
+export interface ProblemUIStore {
     title: string;
     difficulty: Difficulty;
     tags: Array<string> | [];
@@ -171,4 +178,33 @@ interface ProblemUIStore {
     addReferenceSolution: () => void;
     removeReferenceSolution: (id: string) => void;
     updateReferenceSolution: (id: string, field: keyof Omit<ReferenceSolution, "id">, value: string | Language) => void;
+}
+
+export interface Problem {
+    id: string;
+    title: string;
+    description: string;
+    difficulty: Difficulty;
+    constraints: string;
+    hints: string | null;
+    editorial: string | null;
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    tags: Tag[];
+    examples?: Example[];
+    testCases?: TestCase[];
+    snippets?: CodeSnippet[];
+    solutions?: ReferenceSolution[];
+}
+
+export interface ProblmStore {
+    problems: Problem[];
+    selectedProblem: Problem | null;
+
+    setProblems: (problems: Problem[]) => void;
+    setProblem: (problem: Problem) => void;
+    getProblemById: (id: string) => Problem | undefined;
+    setSelectedProblem: (problem: Problem | null) => void;
+    addProblem: (problem: Problem) => void;
 }
