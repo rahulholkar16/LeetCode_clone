@@ -1,7 +1,7 @@
-import { CreateProblemInput } from "@/types";
+import { CreateProblem } from "@/types";
 import { problemSchema } from "../validators/problem.validator";
 
-export const createProblem = async (data: CreateProblemInput) => {
+export const createProblem = async (data: CreateProblem) => {
     const validated = problemSchema.safeParse(data);
     if (!validated.success) {
         return {
