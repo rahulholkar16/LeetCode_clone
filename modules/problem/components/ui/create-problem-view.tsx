@@ -4,16 +4,14 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/modules/auth/store/auth-store";
-import {
-    BasicInformation,
-    CodeSnippetsSection,
-    ExamplesSection,
-    ProblemDescription,
-    ReferenceSolutionSection,
-    TestCasesSection,
-} from "@/modules/problem/components";
 import { useProblem } from "../../hooks/useProblem";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
+import { BasicInformation } from "../BasicInformation";
+import { ProblemDescription } from "../ProblemDescription";
+import ExamplesSection from "../ExamplesSection";
+import { TestCasesSection } from "../TestCasesSection";
+import { CodeSnippetsSection } from "../CodeSnippetsSection";
+import { ReferenceSolutionSection } from "../ReferenceSolutionSection";
 import { Difficulty } from "@/types";
 
 export function CreateProblemView() {
@@ -21,7 +19,7 @@ export function CreateProblemView() {
         title: "Two Sum",
         description:
             "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
-        difficulty: Difficulty.EASY,
+        difficulty: "EASY" as Difficulty,
         tags: ["Array", "Hash Table"],
         constraints:
             "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9\nOnly one valid answer exists.",
@@ -159,7 +157,7 @@ export function CreateProblemView() {
                 examples: examples.map(({ id, ...rest }) => rest),
                 testCases: testCases.map(({ id, ...rest }) => rest),
                 codeSnippets: codeSnippetsRecord,
-                referenceSolution: referenceSolutionRecord,
+                referenceSolutions: referenceSolutionRecord,
             };
 
             await createProblem(body);
