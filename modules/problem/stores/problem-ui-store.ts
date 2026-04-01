@@ -1,4 +1,4 @@
-import { Difficulty, Example, ProblemUIStore, TestCase } from "@/types";
+import { CodeSnippet, Difficulty, Example, ProblemUIStore, TestCase } from "@/types";
 import { create } from "zustand";
 
 const createEmptyExample = (): Example => ({
@@ -15,6 +15,12 @@ const createEmptyTestCase = (): TestCase => ({
     isHidden: false
 });
 
+const createEmptyCodeSnippet = (): CodeSnippet => ({
+    id: crypto.randomUUID(),
+    language: "Javascript",
+    code: "",
+});
+
 export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     title: "",
     difficulty: Difficulty.MEDIUM,
@@ -23,6 +29,7 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     constraints: "",
     examples: [createEmptyExample()],
     testCases: [createEmptyTestCase()],
+    codeSnippets: [createEmptyCodeSnippet()],
 
     setTitle: (title) => set({ title }),
     setTag: (tag) => set((state) => ({
@@ -61,6 +68,16 @@ export const useUiProblmStore = create<ProblemUIStore>((set) => ({
     })),
     removeTestCase: (id) => set((state) => ({
         testCases: state.testCases.length  > 1 ? state.testCases.filter((testCase) => testCase.id !== id) : state.testCases
+    })),
+
+    addCodeSnippet: () => set((state) => ({
+        codeSnippets: [...state.codeSnippets, createEmptyCodeSnippet()]
+    })),
+    removeCodeSnippet: (id) => set((state) => ({
+        codeSnippets: state.codeSnippets.length > 1 ? state.codeSnippets.filter((codeSnippet) => codeSnippet.id !== id) : state.codeSnippets
+    })),
+    updateCodeSnippet: (id, field, value) => set((state) => ({
+        codeSnippets: state.codeSnippets.map((codeSnippet) => codeSnippet.id === id ? {...codeSnippet, [field]: value} : codeSnippet)
     })),
 
 }));

@@ -22,8 +22,7 @@ export function TestCasesSection() {
     const removeTestCase = useUiProblmStore((s) => s.removeTestCase);
     const updateTestCase = useUiProblmStore((s) => s.updateTestCase);
 
-    const [localTestCases, setLocalTestCases] =
-        useState<LocalTestCase[]>(testCases);
+    const [localTestCases, setLocalTestCases] = useState<LocalTestCase[]>(testCases);
 
     const knownIdsRef = useRef<Set<string>>(
         new Set(testCases.map((t) => t.id)),

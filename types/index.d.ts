@@ -93,6 +93,8 @@ enum Difficulty {
     HARD
 }
 
+type Language = "Javascript" | "Java" | "Cpp" |  "Python";
+
 interface Example {
     id: string;
     input: string;
@@ -107,6 +109,12 @@ interface TestCase {
     isHidden: boolean;
 }
 
+interface CodeSnippet {
+    id: string;      
+    language: Language;  
+    code: string;      
+}
+
 interface CreateProblem {
     title: string;
     diffculty: Difficulty;
@@ -115,6 +123,7 @@ interface CreateProblem {
     constraints: string;
     examples: Example[];
     testCase: TestCase[];
+    codeSnippets: CodeSnippet[];
 }
 
 interface ProblemUIStore {
@@ -125,6 +134,7 @@ interface ProblemUIStore {
     constraints: string;
     examples: Example[];
     testCases: TestCase[];
+    codeSnippets: CodeSnippet[];
 
     setTitle: (title: string) => void;
     setTag: (tag: string) => void;
@@ -145,4 +155,8 @@ interface ProblemUIStore {
     addTestCase: () => void;
     updateTestCase: (id: string, field: keyof Omit<TestCase, "id">, value: string | boolean) => void;
     removeTestCase: (id: string) =>  void;
+
+    addCodeSnippet: () => void;
+    removeCodeSnippet: (id: string) => void;
+    updateCodeSnippet: (id: string, field: keyof Omit<CodeSnippet, "id">, value: string | Language) => void;
 }

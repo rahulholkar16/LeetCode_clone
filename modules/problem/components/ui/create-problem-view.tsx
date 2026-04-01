@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/modules/auth/store/auth-store";
@@ -12,7 +12,6 @@ import {
     ReferenceSolutionSection,
     TestCasesSection,
 } from "@/modules/problem/components";
-import { languages } from "@/modules/problem/constant";
 import { useProblem } from "../../hooks/useProblem";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
 
@@ -62,15 +61,11 @@ export function CreateProblemView() {
     const constraints = useUiProblmStore((s) => s.constraints);
     const examples = useUiProblmStore(s => s.examples);
     const testCases = useUiProblmStore(s => s.testCases);
+    const codeSnippets = useUiProblmStore(s => s.codeSnippets);
 
     const { createProblem, isCreateProblem: isLoading } = useProblem();
     const router = useRouter();
     const isAdmin = useAuthStore((s) => s.user?.role === "ADMIN");
-
-
-    const [codeSnippets, setCodeSnippets] = useState<InternalCodeSnippet[]>([
-        { id: "1", language: "javascript", code: "" },
-    ]);
 
     useEffect(() => {
         if (isAdmin === false) {
@@ -79,32 +74,6 @@ export function CreateProblemView() {
     }, [isAdmin, router]);
 
     if (!isAdmin) return null;
-
-    // Code Snippets
-    const addCodeSnippet = () => {
-        setCodeSnippets([
-            ...codeSnippets,
-            { id: Date.now().toString(), language: "javascript", code: "" },
-        ]);
-    };
-
-    const removeCodeSnippet = (id: string) => {
-        if (codeSnippets.length > 1) {
-            setCodeSnippets(codeSnippets.filter((cs) => cs.id !== id));
-        }
-    };
-
-    const updateCodeSnippet = (
-        id: string,
-        field: keyof CodeSnippet,
-        value: string,
-    ) => {
-        setCodeSnippets(
-            codeSnippets.map((cs) =>
-                cs.id === id ? { ...cs, [field]: value } : cs,
-            ),
-        );
-    };
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -167,13 +136,8 @@ export function CreateProblemView() {
                     {/* Test Case Form */}
                     <TestCasesSection />
 
-                    <CodeSnippetsSection
-                        codeSnippets={codeSnippets}
-                        languages={languages}
-                        onAddCodeSnippet={addCodeSnippet}
-                        onRemoveCodeSnippet={removeCodeSnippet}
-                        onUpdateCodeSnippet={updateCodeSnippet}
-                    />
+                    {/* Code Snippets Form */}
+                    <CodeSnippetsSection />
 
                     <ReferenceSolutionSection
                         referenceSolution={formData.referenceSolution}

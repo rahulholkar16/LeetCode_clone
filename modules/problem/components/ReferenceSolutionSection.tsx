@@ -1,12 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ReferenceSolutionSectionProps } from "@/types";
 
-export function ReferenceSolutionSection({
-    referenceSolution,
-    onReferenceSolutionChange,
-}: ReferenceSolutionSectionProps) {
+export function ReferenceSolutionSection() {
     return (
         <Card>
             <CardHeader>

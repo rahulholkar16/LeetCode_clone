@@ -1,8 +1,8 @@
 export const languages = [
-    "javascript",
-    "python",
-    "java",
-    "cpp",
+    "Javascript",
+    "Python",
+    "Java",
+    "Cpp",
 ];
 
 export const getDifficultyColor = (difficulty: string) => {
