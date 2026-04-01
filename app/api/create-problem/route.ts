@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getJudge0LanguageId, pollBatchResults, submitBatch } from "@/lib/judge0";
-import { CreateProblemInput } from "@/types";
+import { CreateProblem, Submission } from "@/types";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,18 +19,18 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 401 });
         }
 
-        const body = (await request.json()) as CreateProblemInput;
-        const { title, description, difficulty, tags, examples, constraints, testCases, codeSnippets, referenceSolution } = body;
-        if (!title || !description || !difficulty || !testCases || !codeSnippets || !referenceSolution) return NextResponse.json({ success: false, error: "Missing field required" }, { status: 400 });
+        const body = (await request.json()) as CreateProblem;
+        const { title, description, difficulty, tags, examples, constraints, testCases, codeSnippets, referenceSolutions } = body;
+        if (!title || !description || !difficulty || !testCases || !codeSnippets || !referenceSolutions) return NextResponse.json({ success: false, error: "Missing field required" }, { status: 400 });
         if (!Array.isArray(testCases) || testCases.length === 0) return NextResponse.json({ success: false, error: "At least one test case is required" }, { status: 400 });
-        if (!referenceSolution || typeof referenceSolution !== 'object') return NextResponse.json({ success: false, error: "Reference solution is required" }, { status: 400 });
+        if (!referenceSolutions || typeof referenceSolutions !== 'object') return NextResponse.json({ success: false, error: "Reference solution is required" }, { status: 400 });
 
         await Promise.all(
-            Object.entries(referenceSolution).map(async ([language, solutionCode]) => {
+            Object.entries(referenceSolutions).map(async ([language, solutionCode]) => {
                 const languageId = getJudge0LanguageId(language);
                 if (!languageId) return NextResponse.json({ success: false, error: `Unsupported language: ${language}` }, { status: 400 });
 
-                const submission = testCases.map((tc) => ({
+                const submission: Submission[] = testCases.map((tc) => ({
                     source_code: solutionCode,
                     language_id: languageId,
                     stdin: tc.input,
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
                 },
 
                 solutions: {
-                    create: Object.entries(referenceSolution).map(
+                    create: Object.entries(referenceSolutions).map(
                         ([language, code]) => ({
                             language,
                             code,
