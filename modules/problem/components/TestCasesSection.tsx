@@ -1,17 +1,78 @@
-import { TestCasesSectionProps } from "@/types";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle, Trash2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useUiProblmStore } from "../stores/problem-ui-store";
+import { useEffect, useRef, useState } from "react";
+import { TestCase } from "@/types";
 
-export function TestCasesSection({
-    testCases,
-    onAddTestCase,
-    onRemoveTestCase,
-    onUpdateTestCase,
-}: TestCasesSectionProps) {
+type LocalTestCase = TestCase;
+
+export function TestCasesSection() {
+    const testCases = useUiProblmStore((s) => s.testCases);
+    const addTestCase = useUiProblmStore((s) => s.addTestCase);
+    const removeTestCase = useUiProblmStore((s) => s.removeTestCase);
+    const updateTestCase = useUiProblmStore((s) => s.updateTestCase);
+
+    const [localTestCases, setLocalTestCases] =
+        useState<LocalTestCase[]>(testCases);
+
+    const knownIdsRef = useRef<Set<string>>(
+        new Set(testCases.map((t) => t.id)),
+    );
+
+    useEffect(() => {
+        setLocalTestCases((prev) => {
+            const prevIds = new Set(prev.map((t) => t.id));
+            const storeIds = new Set(testCases.map((t) => t.id));
+
+            const added = testCases.filter((t) => !prevIds.has(t.id));
+
+            const filtered = prev.filter((t) => storeIds.has(t.id));
+
+            added.forEach((t) => knownIdsRef.current.add(t.id));
+
+            return added.length || filtered.length !== prev.length
+                ? [...filtered, ...added]
+                : prev;
+        });
+    }, [testCases]);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            localTestCases.forEach((localCase) => {
+                const original = testCases.find((t) => t.id === localCase.id);
+                if (!original) return;
+
+                (["input", "output", "isHidden"] as const).forEach((field) => {
+                    if (original[field] !== localCase[field]) {
+                        updateTestCase(localCase.id, field, localCase[field]);
+                    }
+                });
+            });
+        }, 300);
+
+        return () => clearTimeout(timer);
+    }, [localTestCases, testCases, updateTestCase]);
+
+    const onUpdateLocalTestCase = <K extends keyof Omit<TestCase, "id">>(
+        id: string,
+        field: K,
+        value: TestCase[K],
+    ) => {
+        setLocalTestCases((prev) =>
+            prev.map((tc) => (tc.id === id ? { ...tc, [field]: value } : tc)),
+        );
+    };
+
     return (
         <Card>
             <CardHeader>
@@ -26,7 +87,7 @@ export function TestCasesSection({
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={onAddTestCase}
+                        onClick={addTestCase}
                     >
                         <PlusCircle className="w-4 h-4 mr-2" />
                         Add Test Case
@@ -34,7 +95,7 @@ export function TestCasesSection({
                 </div>
             </CardHeader>
             <CardContent className="space-y-4">
-                {testCases.map((testCase, index) => (
+                {localTestCases.map((testCase, index) => (
                     <div
                         key={testCase.id}
                         className="p-4 border border-border rounded-lg space-y-3"
@@ -43,14 +104,12 @@ export function TestCasesSection({
                             <h4 className="font-semibold">
                                 Test Case {index + 1}
                             </h4>
-                            {testCases.length > 1 && (
+                            {localTestCases.length > 1 && (
                                 <Button
                                     type="button"
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() =>
-                                        onRemoveTestCase(testCase.id)
-                                    }
+                                    onClick={() => removeTestCase(testCase.id)}
                                 >
                                     <Trash2 className="w-4 h-4 text-destructive" />
                                 </Button>
@@ -63,7 +122,7 @@ export function TestCasesSection({
                                     placeholder="Enter input..."
                                     value={testCase.input}
                                     onChange={(e) =>
-                                        onUpdateTestCase(
+                                        onUpdateLocalTestCase(
                                             testCase.id,
                                             "input",
                                             e.target.value,
@@ -79,7 +138,7 @@ export function TestCasesSection({
                                     placeholder="Enter expected output..."
                                     value={testCase.output}
                                     onChange={(e) =>
-                                        onUpdateTestCase(
+                                        onUpdateLocalTestCase(
                                             testCase.id,
                                             "output",
                                             e.target.value,
@@ -91,27 +150,12 @@ export function TestCasesSection({
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label>Explanation (Optional)</Label>
-                            <Textarea
-                                placeholder="Explain this test case..."
-                                value={testCase.explanation}
-                                onChange={(e) =>
-                                    onUpdateTestCase(
-                                        testCase.id,
-                                        "explanation",
-                                        e.target.value,
-                                    )
-                                }
-                                rows={2}
-                            />
-                        </div>
-                        <div className="space-y-2">
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id={`visibility-${testCase.id}`}
                                     checked={!testCase.isHidden}
                                     onCheckedChange={(checked) =>
-                                        onUpdateTestCase(
+                                        onUpdateLocalTestCase(
                                             testCase.id,
                                             "isHidden",
                                             !checked,
@@ -150,4 +194,4 @@ export function TestCasesSection({
             </CardContent>
         </Card>
     );
-}
+};
