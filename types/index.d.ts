@@ -100,6 +100,13 @@ interface Example {
     explanation: string;
 }
 
+interface TestCase {
+    id: string;
+    input: string;
+    output: string;
+    isHidden: boolean;
+}
+
 interface CreateProblem {
     title: string;
     diffculty: Difficulty;
@@ -107,6 +114,7 @@ interface CreateProblem {
     description: string;
     constraints: string;
     examples: Example[];
+    testCase: TestCase[];
 }
 
 interface ProblemUIStore {
@@ -116,6 +124,7 @@ interface ProblemUIStore {
     description: string;
     constraints: string;
     examples: Example[];
+    testCase: TestCase[];
 
     setTitle: (title: string) => void;
     setTag: (tag: string) => void;
@@ -132,4 +141,6 @@ interface ProblemUIStore {
         field: keyof Omit<Example, "id">,
         value: string
     ) => void;
+
+    addTestCase: () => void;
 }
