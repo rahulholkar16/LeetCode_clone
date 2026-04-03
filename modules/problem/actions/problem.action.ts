@@ -8,6 +8,9 @@ export const getAllProblem = async () => {
             orderBy: {
                 createdAt: "desc",
             },
+            include: {
+                tags: { include: { tag: true } },
+            },
         });
 
         return {
@@ -30,7 +33,14 @@ export const getProblemById = async (id: string) => {
         const problem = await db.problem.findUnique({
             where: {
                 id: id
-            }
+            },
+            include: {
+                tags: { include: { tag: true } },  
+                examples: true,                        
+                snippets: true,                         
+                solutions: true,                         
+                testCases: { where: { isHidden: false } },
+            },
         });
 
         return {
