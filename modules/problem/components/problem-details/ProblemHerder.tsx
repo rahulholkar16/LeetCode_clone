@@ -30,7 +30,7 @@ export function ProblemHeader({ problem }: ProblemHeaderProps) {
                     {problem.difficulty}
                 </Badge>
 
-                {problem.tags.map((tagItem) => (
+                {(problem.tags ?? []).map((tagItem) => (
                     <Badge
                         key={tagItem.tag.id}
                         variant="outline"
