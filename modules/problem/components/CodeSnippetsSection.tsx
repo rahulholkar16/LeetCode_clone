@@ -71,6 +71,8 @@ export function CodeSnippetsSection() {
         return () => clearTimeout(timer);
     }, [loaclCodeSnippets, codeSnippets, updateCodeSnippet]);
 
+    console.log("CODE SNIIPETS SECTION::", codeSnippets);
+
     const onUpdateCodeSnippet = <K extends keyof Omit<CodeSnippet, "id">>(
         id: string,
         field: K,
@@ -174,4 +176,4 @@ export function CodeSnippetsSection() {
             </CardContent>
         </Card>
     );
-}
+};

@@ -10,7 +10,7 @@ export const useProblem = () => {
         onSuccess: (res) => {
             if (!res.success) {
                 toast.error(res.message);
-                return;
+                return;                                                                                                                                                                                                                                                                             
             }
             toast.success(res.message);
             router.push("/problems");
