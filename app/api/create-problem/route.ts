@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { getJudge0LanguageId, pollBatchResults, submitBatch } from "@/lib/judge0";
 import { CreateProblem, Submission } from "@/types";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
                 },
             },
         });
-            
+        revalidatePath("/problems");
         return NextResponse.json({
             success: true,
             data: newProblem
