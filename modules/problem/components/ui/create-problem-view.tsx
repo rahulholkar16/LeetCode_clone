@@ -19,10 +19,14 @@ export function CreateProblemView() {
         title: "Two Sum",
         description:
             "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.\n\nYou may assume that each input would have exactly one solution, and you may not use the same element twice.\n\nYou can return the answer in any order.",
+
         difficulty: "EASY" as Difficulty,
+
         tags: ["Array", "Hash Table"],
+
         constraints:
             "2 <= nums.length <= 10^4\n-10^9 <= nums[i] <= 10^9\n-10^9 <= target <= 10^9\nOnly one valid answer exists.",
+
         examples: [
             {
                 id: crypto.randomUUID(),
@@ -39,6 +43,7 @@ export function CreateProblemView() {
                     "Because nums[1] + nums[2] == 6, we return [1, 2].",
             },
         ],
+
         testCases: [
             {
                 id: crypto.randomUUID(),
@@ -59,28 +64,120 @@ export function CreateProblemView() {
                 isHidden: true,
             },
         ],
+
+        // 👇 USER STARTING CODE (boilerplate)
         codeSnippets: [
             {
                 id: crypto.randomUUID(),
                 language: "Python" as const,
-                code: `def solve():\n    ...`,
+                code: `# Read input, write your code, print output
+
+def solve():
+    import sys
+    data = sys.stdin.read().split()
+    
+    n = int(data[0])
+    nums = list(map(int, data[1:n+1]))
+    target = int(data[n+1])
+
+    # Write your logic here
+    
+
+if __name__ == "__main__":
+    solve()`,
             },
             {
                 id: crypto.randomUUID(),
                 language: "Javascript" as const,
-                code: `function solve() {\n    ...\n}\nsolve();`,
+                code: `// Read input, write your code, print output
+
+function solve(input) {
+    const data = input.trim().split(/\\s+/).map(Number);
+
+    let index = 0;
+    const n = data[index++];
+    
+    const nums = [];
+    for (let i = 0; i < n; i++) {
+        nums.push(data[index++]);
+    }
+
+    const target = data[index];
+
+    // Write your logic here
+}
+
+// DO NOT REMOVE
+process.stdin.resume();
+process.stdin.setEncoding("utf-8");
+
+let inputData = "";
+process.stdin.on("data", chunk => inputData += chunk);
+process.stdin.on("end", () => solve(inputData));`,
             },
         ],
+
+        // 👇 CORRECT SOLUTIONS (JUDGE VERIFY)
         referenceSolutions: [
             {
                 id: crypto.randomUUID(),
                 language: "Python" as const,
-                code: `def solve():\n    ...\nif __name__ == "__main__":\n    solve()`,
+                code: `def solve():
+    import sys
+    data = sys.stdin.read().split()
+    
+    n = int(data[0])
+    nums = list(map(int, data[1:n+1]))
+    target = int(data[n+1])
+
+    hashmap = {}
+
+    for i in range(n):
+        complement = target - nums[i]
+        if complement in hashmap:
+            print(hashmap[complement], i)
+            return
+        hashmap[nums[i]] = i
+
+if __name__ == "__main__":
+    solve()`,
             },
             {
                 id: crypto.randomUUID(),
                 language: "Javascript" as const,
-                code: `function solve() {\n    ...\n}\nsolve();`,
+                code: `function solve(input) {
+    const data = input.trim().split(/\\s+/).map(Number);
+
+    let index = 0;
+    const n = data[index++];
+    
+    const nums = [];
+    for (let i = 0; i < n; i++) {
+        nums.push(data[index++]);
+    }
+
+    const target = data[index];
+
+    const map = new Map();
+
+    for (let i = 0; i < n; i++) {
+        const complement = target - nums[i];
+
+        if (map.has(complement)) {
+            console.log(map.get(complement), i);
+            return;
+        }
+
+        map.set(nums[i], i);
+    }
+}
+
+process.stdin.resume();
+process.stdin.setEncoding("utf-8");
+
+let inputData = "";
+process.stdin.on("data", chunk => inputData += chunk);
+process.stdin.on("end", () => solve(inputData));`,
             },
         ],
     };
