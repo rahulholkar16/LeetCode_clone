@@ -30,3 +30,15 @@ export function getPlaceholder(language: Language): string {
     };
     return placeholders[language];
 }
+
+export function getLanguageName (language_id: number) {
+    const languageMap: Record<number, string> = {
+        71: "PYTHON",
+        63: "JAVASCRIPT",
+        62: "JAVA",
+        54: "CPP",
+        60: "GO" 
+    };
+
+    return languageMap[language_id];
+}

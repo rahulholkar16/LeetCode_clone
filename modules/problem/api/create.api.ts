@@ -1,8 +1,10 @@
+
 import { CreateProblem } from "@/types";
 import { problemSchema } from "../validators/problem.validator";
 
 export const createProblem = async (data: CreateProblem) => {    
     const validated = problemSchema.safeParse(data);
+
     if (!validated.success) {
         return {
             success: false,
