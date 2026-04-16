@@ -2,12 +2,19 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Problem } from "@/types";
+import { useUiProblmStore } from "../../stores/problem-ui-store";
+import useGetAllSubmission from "../../hooks/useGetAllSubmission";
+import SubmissionsList from "./SubmissionList";
 
 interface ProblemDescriptionProps {
     problem: Problem;
 }
 
 export function ProblemDescription({ problem }: ProblemDescriptionProps) {
+    const submissions = useUiProblmStore(s => s.submissions);
+    useGetAllSubmission(problem.id);
+    console.log("submmision:::", submissions);
+    
     return (
         <Tabs defaultValue="description" className="w-full">
             <TabsList className="w-full justify-start border-b border-border rounded-none bg-transparent p-0 h-auto">
@@ -116,10 +123,7 @@ export function ProblemDescription({ problem }: ProblemDescriptionProps) {
 
             {/* Submissions Tab */}
             <TabsContent value="submissions" className="mt-6">
-                <div className="text-center py-12 text-foreground/60 border border-border rounded-lg bg-muted/20">
-                    No submissions yet. Start coding to see your submissions
-                    here!
-                </div>
+                <SubmissionsList submissions={submissions} />
             </TabsContent>
         </Tabs>
     );
