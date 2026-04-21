@@ -124,7 +124,7 @@ export default function SubmissionsList({ submissions }: SubmissionsListProps) {
                                     | "All",
                             )
                         }
-                        className="px-2 py-1.5 rounded-lg border border-border bg-background text-sm hover:border-primary/50 transition-colors min-w-0 flex-shrink"
+                        className="px-2 py-1.5 rounded-lg border border-border bg-background text-sm hover:border-primary/50 transition-colors min-w-0 shrink"
                     >
                         <option value="All">All Status</option>
                         <option value="Accepted">Accepted</option>
@@ -144,7 +144,7 @@ export default function SubmissionsList({ submissions }: SubmissionsListProps) {
                                     | "All",
                             )
                         }
-                        className="px-2 py-1.5 rounded-lg border border-border bg-background text-sm hover:border-primary/50 transition-colors min-w-0 flex-shrink"
+                        className="px-2 py-1.5 rounded-lg border border-border bg-background text-sm hover:border-primary/50 transition-colors min-w-0 shrink"
                     >
                         <option value="All">All Languages</option>
                         {uniqueLanguages.map((lang) => (
