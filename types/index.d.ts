@@ -212,26 +212,23 @@ export interface ProblmStore {
     addProblem: (problem: Problem) => void;
 }
 
-interface ExecuteResponse {
+export interface ExecuteResponse {
     success: boolean;
     message?: string;
-    submission?: {
+    submission?: ResSubmission & {
         testCaseResult: ExecutionResult[];
-        stdout: string;
-        memory: string;
-        time: string;
     };
 }
 
-interface ExecutionResult {
+export interface ExecutionResult {
     id: string;
-    submissionId: string;
+    submmisionId: string;
 
     testCase: number;
     passed: boolean;
 
-    stdout: string | null;       // ✅ FIX
-    expected: string;
+    stdout: string | null;
+    expected: string | null;
 
     status: string;
 
