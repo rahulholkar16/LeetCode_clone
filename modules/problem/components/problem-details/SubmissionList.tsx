@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { type MouseEvent, useState } from "react";
 import {
     Check,
     X,
@@ -10,10 +10,12 @@ import {
     ChevronDown,
     ChevronUp,
     Filter,
+    Copy,
 } from "lucide-react";
 import { ResSubmission } from "@/types";
 import { SubmissionsStats } from "./SubmissionStats";
 import { formatSubmissionDate } from "../../constant";
+import { Button } from "@/components/ui/button";
 
 interface SubmissionsListProps {
     submissions: ResSubmission[];
@@ -29,6 +31,9 @@ export default function SubmissionsList({ submissions }: SubmissionsListProps) {
     const [languageFilter, setLanguageFilter] = useState<
         ResSubmission["language"] | "All"
     >("All");
+    const [copiedSubmission, setCopiedSubmission] = useState<string | null>(
+        null,
+    );
 
     if (submissions.length === 0) {
         return (
@@ -44,6 +49,21 @@ export default function SubmissionsList({ submissions }: SubmissionsListProps) {
 
     const toggleExpanded = (id: string) => {
         setExpandedSubmission(expandedSubmission === id ? null : id);
+    };
+
+    const handleCopyCode = async (
+        event: MouseEvent<HTMLButtonElement>,
+        submission: ResSubmission,
+    ) => {
+        event.stopPropagation();
+
+        try {
+            await navigator.clipboard.writeText(submission.sourceCode);
+            setCopiedSubmission(submission.id);
+            window.setTimeout(() => setCopiedSubmission(null), 1500);
+        } catch (error) {
+            console.error("Failed to copy submission code:", error);
+        }
     };
 
     const getStatusIcon = (status: ResSubmission["status"]) => {
@@ -215,10 +235,39 @@ export default function SubmissionsList({ submissions }: SubmissionsListProps) {
                             </div>
 
                             {isExpanded && (
-                                <div className="p-3 sm:p-4 border-t border-border overflow-x-auto">
-                                    <pre className="text-xs sm:text-sm font-mono whitespace-pre">
-                                        {submission.sourceCode}
-                                    </pre>
+                                <div className="border-t border-border">
+                                    <div className="flex items-center justify-between gap-3 px-3 py-2 sm:px-4">
+                                        <span className="text-xs font-medium text-foreground/60">
+                                            Code
+                                        </span>
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            size="sm"
+                                            className="h-8 gap-2"
+                                            onClick={(event) =>
+                                                handleCopyCode(
+                                                    event,
+                                                    submission,
+                                                )
+                                            }
+                                        >
+                                            {copiedSubmission ===
+                                            submission.id ? (
+                                                <Check className="h-3.5 w-3.5 text-green-500" />
+                                            ) : (
+                                                <Copy className="h-3.5 w-3.5" />
+                                            )}
+                                            {copiedSubmission === submission.id
+                                                ? "Copied"
+                                                : "Copy"}
+                                        </Button>
+                                    </div>
+                                    <div className="overflow-x-auto px-3 pb-3 sm:px-4 sm:pb-4">
+                                        <pre className="text-xs sm:text-sm font-mono whitespace-pre">
+                                            {submission.sourceCode}
+                                        </pre>
+                                    </div>
                                 </div>
                             )}
                         </div>
