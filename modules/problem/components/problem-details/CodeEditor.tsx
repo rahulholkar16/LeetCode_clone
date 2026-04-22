@@ -74,9 +74,9 @@ export function CodeEditor({
     };
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex h-full min-h-0 flex-col">
             {/* Header */}
-            <div className="border-b border-border p-4 flex items-center justify-between bg-background">
+            <div className="flex shrink-0 items-center justify-between border-b border-border bg-background p-4">
                 <Select
                     value={language}
                     onValueChange={(value) => {
@@ -111,7 +111,7 @@ export function CodeEditor({
             </div>
 
             {/* Editor */}
-            <div className="flex-1 bg-background">
+            <div className="min-h-0 flex-1 bg-background">
                 <Editor
                     height="100%"
                     language={MONACO_LANGUAGE_MAP[language]}

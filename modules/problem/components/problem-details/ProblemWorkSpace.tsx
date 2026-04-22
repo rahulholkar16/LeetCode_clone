@@ -131,9 +131,9 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
     };
 
     return (
-        <>
+        <div className="flex h-full min-h-0 flex-col">
             {/* Editor */}
-            <div className="flex-1 m-4 rounded-lg border border-border overflow-hidden bg-background">
+            <div className="m-4 mb-3 min-h-[320px] flex-1 overflow-hidden rounded-lg border border-border bg-background">
                 <CodeEditor
                     language={selectedLanguage}
                     code={editorCode}
@@ -146,13 +146,13 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
             </div>
 
             {/* Test Cases + Result */}
-            <div className="mx-4 mb-4 space-y-4">
+            <div className="mx-4 mb-4 max-h-[42%] shrink-0 space-y-4 overflow-y-auto">
                 <TestCases
                     problem={{ ...problem, examples: problem.examples ?? [] }}
                     results={results}
                 />
                 <TestResultPanel result={testResult} />
             </div>
-        </>
+        </div>
     );
 };

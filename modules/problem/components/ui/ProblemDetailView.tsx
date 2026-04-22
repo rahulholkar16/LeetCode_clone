@@ -68,8 +68,8 @@ export function ProblemDetailView({ id }: ProblemDetailViewProps) {
                 {/* Right panel — always visible on lg, tab-controlled on mobile */}
                 <div
                     className={`
-            w-full lg:w-1/2 flex flex-col
-            ${activeTab === "workspace" ? "block" : "hidden"} lg:block
+            w-full lg:w-1/2 min-h-0 flex-col overflow-hidden
+            ${activeTab === "workspace" ? "flex" : "hidden"} lg:flex
           `}
                 >
                     <ProblemWorkspace initialProblem={problem} />
