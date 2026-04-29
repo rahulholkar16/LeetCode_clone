@@ -140,7 +140,7 @@ export default function SubmissionsList({ submissions }: SubmissionsListProps) {
                         onChange={(e) =>
                             setStatusFilter(
                                 e.target.value as
-                                    | ResSubmission["status"]
+                                    | ["status"]ResSubmission
                                     | "All",
                             )
                         }
