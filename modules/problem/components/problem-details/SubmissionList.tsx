@@ -140,11 +140,11 @@ export default function SubmissionsList({ submissions }: SubmissionsListProps) {
                         onChange={(e) =>
                             setStatusFilter(
                                 e.target.value as
-                                    | ["status"]ResSubmission
+                                    | ResSubmission["status"]
                                     | "All",
                             )
                         }
-                        className="px-2 py-1.5 rounded-lg border border-border bg-background text-sm hover:border-primary/50 transition-colors min-w-0 shrink"
+                        className="px-2 py-1.4 rounded-lg border border-border bg-background text-sm hover:border-primary/50 transition-colors min-w-0 shrink"
                     >
                         <option value="All">All Status</option>
                         <option value="Accepted">Accepted</option>
