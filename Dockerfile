@@ -2,6 +2,8 @@
 FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
+
+
 # STAGE 2 - Dependencies
 FROM base AS deps
 COPY package.json bun.lock ./
