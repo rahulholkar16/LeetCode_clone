@@ -251,7 +251,7 @@ export interface ResSubmission {
     stdout: string | null;
     stderr: string | null;
     compileOutput: string | null;
-    status: 'Pending' | 'Accepted' | 'Wrong Answer' | 'Time Limit Exceeded' | 'Runtime Error' | 'Compile Error' | 'Compilation Error';
+    status: string;
     memory: string[];
     time: string[];
     createdAt: string;
@@ -332,6 +332,8 @@ export interface CodeEditorProps {
     onCodeChange: (code: string) => void;
     onRunCode: () => void;
     onSubmit: () => void;
+    isRunning?: boolean;
+    isSubmitting?: boolean;
 }
 
 export interface TestCaseExample {
