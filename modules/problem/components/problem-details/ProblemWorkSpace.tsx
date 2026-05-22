@@ -11,10 +11,18 @@ import { useProblmStore } from "../../stores/problem-store";
 import { TestResultPanel } from "./TestResultPanel";
 import { CodeEditor } from "./CodeEditor";
 import { getJudge0LanguageId } from "@/lib/judge0";
-import { executeCode, runCode } from "../../actions/problem.action";
+import {
+    executeCode,
+    getSubmissionById,
+    runCode,
+} from "../../actions/problem.action";
 import { toast } from "sonner";
 import TestCases from "./TestCase";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
+import { getSubmissionStatusCategory } from "../../utils/submission-status";
+
+const sleep = (ms: number) =>
+    new Promise((resolve) => window.setTimeout(resolve, ms));
 
 export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
     const { selectedProblem, setSelectedProblem, getProblemById, addProblem } =
@@ -23,6 +31,8 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
 
     const [results, setResults] = useState<ExecutionResult[]>([]);
     const [testResult, setTestResult] = useState<"pass" | "fail" | null>(null);
+    const [isRunning, setIsRunning] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         const existingProblem = getProblemById(initialProblem.id);
@@ -53,10 +63,6 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
 
     const [editorCode, setEditorCode] = useState(snippetCode);
 
-    useEffect(() => {
-        setEditorCode(snippetCode);
-    }, [snippetCode]);
-
     const getExecutionPayload = () => {
         const language_id = getJudge0LanguageId(selectedLanguage);
         const stdin = problem?.testCases?.map((tc) => tc.input) ?? [];
@@ -66,10 +72,7 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         return { expected_outputs, language_id, stdin };
     };
 
-    const updateResults = (res: ExecuteResponse) => {
-        const testResults =
-            res.testCaseResult ?? res.submission?.testCaseResult ?? [];
-
+    const updateResultsFromTestCases = (testResults: ExecutionResult[]) => {
         setResults(testResults);
 
         const allPassed = testResults.every((r) => r.passed);
@@ -78,8 +81,66 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         return allPassed;
     };
 
+    const updateResults = (res: ExecuteResponse) => {
+        const testResults =
+            res.testCaseResult ?? res.submission?.testCaseResult ?? [];
+
+        return updateResultsFromTestCases(testResults);
+    };
+
+    const replaceSubmission = (submission: ExecuteResponse["submission"]) => {
+        if (!submission) return;
+
+        const currentSubmissions = useUiProblmStore.getState().submissions;
+        const existingIndex = currentSubmissions.findIndex(
+            (item) => item.id === submission.id,
+        );
+
+        if (existingIndex === -1) {
+            setSubmissions([submission, ...currentSubmissions]);
+            return;
+        }
+
+        setSubmissions(
+            currentSubmissions.map((item) =>
+                item.id === submission.id ? submission : item,
+            ),
+        );
+    };
+
+    const waitForSubmissionResult = async (submissionId: string) => {
+        for (let attempt = 0; attempt < 30; attempt++) {
+            await sleep(1000);
+
+            const res: ExecuteResponse = await getSubmissionById(submissionId);
+            if (!res?.success || !res.submission) continue;
+
+            replaceSubmission(res.submission);
+
+            if (res.submission.status !== "Pending") return res.submission;
+        }
+
+        return null;
+    };
+
+    const hasCode = () => editorCode.trim().length > 0;
+
+    const handleLanguageChange = (language: Language) => {
+        setSelectedLanguage(language);
+        setEditorCode(
+            problem.snippets?.find((snippet) => snippet.language === language)
+                ?.code ?? "",
+        );
+    };
+
     const handleRunCode = async () => {
+        if (!hasCode()) {
+            toast.error("Please write code before running.");
+            return;
+        }
+
         try {
+            setIsRunning(true);
             const { expected_outputs, language_id, stdin } =
                 getExecutionPayload();
             const res: ExecuteResponse = await runCode(
@@ -104,11 +165,19 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         } catch (error) {
             console.log(error);
             toast.error("Execution failed");
+        } finally {
+            setIsRunning(false);
         }
     };
 
     const handleSubmit = async () => {
+        if (!hasCode()) {
+            toast.error("Please write code before submitting.");
+            return;
+        }
+
         try {
+            setIsSubmitting(true);
             const { expected_outputs, language_id, stdin } =
                 getExecutionPayload();
             const res: ExecuteResponse = await executeCode(
@@ -130,7 +199,35 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
             ]);
 
             if (res.submission.status === "Pending") {
-                toast.success("Submission queued");
+                toast.loading("Judging submission...", {
+                    id: res.submission.id,
+                });
+
+                const judgedSubmission = await waitForSubmissionResult(
+                    res.submission.id,
+                );
+
+                toast.dismiss(res.submission.id);
+
+                if (!judgedSubmission) {
+                    toast.error("Submission is still judging. Check Submissions soon.");
+                    return;
+                }
+
+                const allPassed = updateResultsFromTestCases(
+                    judgedSubmission.testCaseResult ?? [],
+                );
+
+                const statusCategory = getSubmissionStatusCategory(
+                    judgedSubmission.status,
+                );
+
+                if (allPassed || statusCategory === "Accepted") {
+                    toast.success("Accepted");
+                } else {
+                    toast.error(judgedSubmission.status);
+                }
+
                 return;
             }
 
@@ -144,6 +241,8 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
         } catch (error) {
             console.log(error);
             toast.error("Submission failed");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -155,10 +254,12 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
                     language={selectedLanguage}
                     code={editorCode}
                     availableLanguages={availableLanguages}
-                    onLanguageChange={setSelectedLanguage}
+                    onLanguageChange={handleLanguageChange}
                     onCodeChange={setEditorCode}
                     onRunCode={handleRunCode}
                     onSubmit={handleSubmit}
+                    isRunning={isRunning}
+                    isSubmitting={isSubmitting}
                 />
             </div>
 

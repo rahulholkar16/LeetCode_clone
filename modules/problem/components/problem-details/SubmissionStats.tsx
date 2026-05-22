@@ -1,20 +1,27 @@
 import { SubmissionStatsProps } from "@/types";
 import { Check, X, Clock, AlertCircle } from "lucide-react";
+import {
+    getSubmissionStatusCategory,
+    isSubmissionError,
+} from "../../utils/submission-status";
 
 export function SubmissionsStats({ submissions }: SubmissionStatsProps) {
     if (submissions.length === 0) return null;
 
     const stats = {
         total: submissions.length,
-        accepted: submissions.filter((s) => s.status === "Accepted").length,
-        wrongAnswer: submissions.filter((s) => s.status === "Wrong Answer")
-            .length,
+        accepted: submissions.filter(
+            (s) => getSubmissionStatusCategory(s.status) === "Accepted",
+        ).length,
+        wrongAnswer: submissions.filter(
+            (s) => getSubmissionStatusCategory(s.status) === "Wrong Answer",
+        ).length,
         timeLimitExceeded: submissions.filter(
-            (s) => s.status === "Time Limit Exceeded",
+            (s) =>
+                getSubmissionStatusCategory(s.status) ===
+                "Time Limit Exceeded",
         ).length,
-        errors: submissions.filter(
-            (s) => s.status === "Runtime Error" || s.status === "Compile Error",
-        ).length,
+        errors: submissions.filter((s) => isSubmissionError(s.status)).length,
     };
 
     const acceptanceRate =

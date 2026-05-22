@@ -16,13 +16,17 @@ import { ResSubmission, SubmissionListProps } from "@/types";
 import { SubmissionsStats } from "./SubmissionStats";
 import { formatSubmissionDate } from "../../constant";
 import { Button } from "@/components/ui/button";
+import {
+    getSubmissionStatusCategory,
+    type SubmissionStatusCategory,
+} from "../../utils/submission-status";
 
 export default function SubmissionsList({ submissions }: SubmissionListProps) {
     const [expandedSubmission, setExpandedSubmission] = useState<string | null>(
         null,
     );
     const [statusFilter, setStatusFilter] = useState<
-        ResSubmission["status"] | "All"
+        SubmissionStatusCategory | "All"
     >("All");
     const [languageFilter, setLanguageFilter] = useState<
         ResSubmission["language"] | "All"
@@ -63,7 +67,7 @@ export default function SubmissionsList({ submissions }: SubmissionListProps) {
     };
 
     const getStatusIcon = (status: ResSubmission["status"]) => {
-        switch (status) {
+        switch (getSubmissionStatusCategory(status)) {
             case "Accepted":
                 return <Check className="w-4 h-4 text-green-500 shrink-0" />;
             case "Wrong Answer":
@@ -81,7 +85,7 @@ export default function SubmissionsList({ submissions }: SubmissionListProps) {
     };
 
     const getStatusColor = (status: ResSubmission["status"]) => {
-        switch (status) {
+        switch (getSubmissionStatusCategory(status)) {
             case "Accepted":
                 return "text-green-500";
             case "Wrong Answer":
@@ -112,7 +116,8 @@ export default function SubmissionsList({ submissions }: SubmissionListProps) {
 
     const filteredSubmissions = submissions.filter((submission) => {
         const matchesStatus =
-            statusFilter === "All" || submission.status === statusFilter;
+            statusFilter === "All" ||
+            getSubmissionStatusCategory(submission.status) === statusFilter;
         const matchesLanguage =
             languageFilter === "All" || submission.language === languageFilter;
         return matchesStatus && matchesLanguage;
@@ -136,7 +141,7 @@ export default function SubmissionsList({ submissions }: SubmissionListProps) {
                         onChange={(e) =>
                             setStatusFilter(
                                 e.target.value as
-                                    | ResSubmission["status"]
+                                    | SubmissionStatusCategory
                                     | "All",
                             )
                         }
