@@ -123,6 +123,13 @@ export const runCode = async (
             };
         }
 
+        if (!source_code.trim()) {
+            return {
+                success: false,
+                message: "Please write code before running.",
+            };
+        }
+
         if (!validateExecutionPayload(stdin, expected_outputs)) return {
             success: false,
             message: "Invalid testCases",
@@ -159,6 +166,13 @@ export const executeCode = async (source_code: string, language_id: number, stdi
             return {
                 success: false,
                 message: "Unauthorized",
+            };
+        }
+
+        if (!source_code.trim()) {
+            return {
+                success: false,
+                message: "Please write code before submitting.",
             };
         }
 
@@ -199,6 +213,57 @@ export const executeCode = async (source_code: string, language_id: number, stdi
         };
     }
     
+};
+
+export const getSubmissionById = async (submissionId: string) => {
+    try {
+        const session = await auth.api.getSession({
+            headers: await headers()
+        });
+
+        if (!session) {
+            return {
+                success: false,
+                message: "Unauthorized",
+            };
+        }
+
+        if (!submissionId) return {
+            success: false,
+            message: "Submission Id is required.",
+        }
+
+        const submission = await db.submission.findFirst({
+            where: {
+                id: submissionId,
+                userId: session.user.id,
+            },
+            include: {
+                testCaseResult: {
+                    orderBy: {
+                        testCase: "asc",
+                    },
+                },
+            },
+        });
+
+        if (!submission) return {
+            success: false,
+            message: "Submission not found.",
+        }
+
+        return {
+            success: true,
+            submission,
+        };
+    } catch (error) {
+        console.error("Error fetching submission:", error);
+
+        return {
+            success: false,
+            message: "Something went wrong.",
+        };
+    }
 };
 
 export const getAllSubmissionByUser = async (problemId: string) => {
