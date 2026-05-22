@@ -37,6 +37,8 @@ export function CodeEditor({
     onCodeChange,
     onRunCode,
     onSubmit,
+    isRunning = false,
+    isSubmitting = false,
 }: CodeEditorProps) {
     const { theme } = useTheme();
 
@@ -86,16 +88,21 @@ export function CodeEditor({
                 </Select>
 
                 <div className="flex gap-2">
-                    <Button variant="outline" onClick={onRunCode}>
+                    <Button
+                        variant="outline"
+                        onClick={onRunCode}
+                        disabled={isRunning || isSubmitting}
+                    >
                         <Play className="w-4 h-4 mr-2" />
-                        Run Code
+                        {isRunning ? "Running..." : "Run Code"}
                     </Button>
                     <Button
                         className="bg-green-600 hover:bg-green-700 text-white"
                         onClick={onSubmit}
+                        disabled={isRunning || isSubmitting}
                     >
                         <Check className="w-4 h-4 mr-2" />
-                        Submit
+                        {isSubmitting ? "Judging..." : "Submit"}
                     </Button>
                 </div>
             </div>
