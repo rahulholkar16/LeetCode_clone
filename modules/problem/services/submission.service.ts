@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { pollBatchResults, submitBatch } from "@/lib/judge0";
 import { getLanguageName } from "../constant";
+import StatsQueue from "@/modules/profile/Queue/queue";
 
 export interface SubmissionJobData {
     submissionId: string;
@@ -144,80 +145,8 @@ export const processSubmission = async (data: SubmissionJobData) => {
             : []),
     ]);
 
-    const totalSolved = await db.problemSolved.count({
-        where: {
-            userId: data.userId
-        }
-    });
-
-    const totalSubmissions = await db.submission.count({
-        where: {
-            userId: data.userId
-        }
-    });
-
-    const acceptedSubmissions = await db.submission.count({
-        where: {
-            userId: data.userId,
-            status: "Accepted"
-        }
-    });
-
-    const easySolved = await db.problemSolved.count({
-        where: {
-            userId: data.userId,
-            problem: {
-                difficulty: "Easy"
-            }
-        }
-    });
-
-    const mediumSolved = await db.problemSolved.count({
-        where: {
-            userId: data.userId,
-            problem: {
-                difficulty: "Medium"
-            }
-        }
-    });
-
-    const hardSolved = await db.problemSolved.count({
-        where: {
-            userId: data.userId,
-            problem: {
-                difficulty: "Hard"
-            }
-        }
-    });
-
-    try{
-        await db.userStats.upsert({
-            where: {
-                userId: data.userId
-            },
-
-            update: {
-                totalSolved,
-                totalSubmissions,
-                acceptedSubmissions,
-                easySolved,
-                mediumSolved,
-                hardSolved
-            },
-
-            create: {
-                userId: data.userId,
-                totalSolved,
-                totalSubmissions,
-                acceptedSubmissions,
-                easySolved,
-                mediumSolved,
-                hardSolved
-            }
-        });
-    } catch(error) {
-        console.error("Error updating user stats:", error);
-    }
+    // Stats JOB to update user stats after submission is processed
+    await StatsQueue.add("update-user-stats", { userId: data.userId }, { jobId: `update-user-stats:${data.userId}`, removeOnComplete: true });
 
     return {
         allPassed,
