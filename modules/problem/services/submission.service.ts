@@ -127,22 +127,97 @@ export const processSubmission = async (data: SubmissionJobData) => {
         }),
         ...(allPassed
             ? [
-                  db.problemSolved.upsert({
-                      where: {
-                          userId_problemId: {
-                              userId: data.userId,
-                              problemId: data.problemId,
-                          },
-                      },
-                      update: {},
-                      create: {
-                          userId: data.userId,
-                          problemId: data.problemId,
-                      },
-                  }),
-              ]
+                db.problemSolved.upsert({
+                    where: {
+                        userId_problemId: {
+                            userId: data.userId,
+                            problemId: data.problemId,
+                        },
+                    },
+                    update: {},
+                    create: {
+                        userId: data.userId,
+                        problemId: data.problemId,
+                    },
+                }),
+            ]
             : []),
     ]);
+
+    const totalSolved = await db.problemSolved.count({
+        where: {
+            userId: data.userId
+        }
+    });
+
+    const totalSubmissions = await db.submission.count({
+        where: {
+            userId: data.userId
+        }
+    });
+
+    const acceptedSubmissions = await db.submission.count({
+        where: {
+            userId: data.userId,
+            status: "Accepted"
+        }
+    });
+
+    const easySolved = await db.problemSolved.count({
+        where: {
+            userId: data.userId,
+            problem: {
+                difficulty: "Easy"
+            }
+        }
+    });
+
+    const mediumSolved = await db.problemSolved.count({
+        where: {
+            userId: data.userId,
+            problem: {
+                difficulty: "Medium"
+            }
+        }
+    });
+
+    const hardSolved = await db.problemSolved.count({
+        where: {
+            userId: data.userId,
+            problem: {
+                difficulty: "Hard"
+            }
+        }
+    });
+
+    try{
+        await db.userStats.upsert({
+            where: {
+                userId: data.userId
+            },
+
+            update: {
+                totalSolved,
+                totalSubmissions,
+                acceptedSubmissions,
+                easySolved,
+                mediumSolved,
+                hardSolved
+            },
+
+            create: {
+                userId: data.userId,
+                totalSolved,
+                totalSubmissions,
+                acceptedSubmissions,
+                easySolved,
+                mediumSolved,
+                hardSolved
+            }
+        });
+    } catch(error) {
+        console.error("Error updating user stats:", error);
+    }
 
     return {
         allPassed,
