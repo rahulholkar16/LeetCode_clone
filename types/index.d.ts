@@ -444,3 +444,7 @@ export interface DailySubmission {
 export interface SubmissionCalendarProps {
   submissions: DailySubmission[];
 }
+
+export interface StatsJobData {
+    userId: string;
+}
