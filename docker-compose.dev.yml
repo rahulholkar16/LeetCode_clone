@@ -80,8 +80,6 @@ services:
     image: oven/bun:1
     container_name: leetcode_app_dev
     working_dir: /app
-    # bun install once, generate prisma client, migrate, then dev server
-    # rm -rf removed — named volume is already isolated, no need to wipe
     command: >
       sh -c "
         bun install &&
@@ -120,9 +118,6 @@ services:
     image: oven/bun:1
     container_name: leetcode_submission_worker_dev
     working_dir: /app
-    # No bun install — shared node_modules volume already populated by app service
-    # No prisma generate — shared prisma/generated volume already populated by app service
-    # No rm -rf — caused Permission denied + Device busy errors when both services ran it simultaneously
     command: >
       sh -c "
         bunx prisma generate &&
@@ -155,7 +150,6 @@ services:
     image: oven/bun:1
     container_name: leetcode_prisma_studio_dev
     working_dir: /app
-    # No bun install or prisma generate — both shared volumes already populated by app service
     command: >
       sh -c "
         bunx prisma studio --port 5555 --browser none
