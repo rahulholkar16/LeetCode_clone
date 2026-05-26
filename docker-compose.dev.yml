@@ -77,7 +77,7 @@ services:
 
   # 🟩 App (DEV)
   app:
-    image: oven/bun:1
+    image: oven/bun:1-alpine 
     container_name: leetcode_app_dev
     working_dir: /app
     command: >
@@ -139,6 +139,36 @@ services:
       redis:
         condition: service_started
       judge0-server:
+        condition: service_started
+      app:
+        condition: service_started  # ensures bun install + migrate have completed before worker starts
+    restart: unless-stopped
+    <<: *default-logging
+
+  # 🟪 Stats Worker (DEV)
+  stats-worker:
+    image: oven/bun:1
+    container_name: leetcode_stats_worker_dev
+    working_dir: /app
+    command: >
+      sh -c "
+        bunx prisma generate &&
+        bun run worker:stats
+      "
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      NODE_ENV: development
+    volumes:
+      - .:/app
+      - app_node_modules_dev:/app/node_modules          # shared with app — already installed
+      - app_prisma_generated_dev:/app/prisma/generated  # shared with app — already generated
+    depends_on:
+      app-db:
+        condition: service_healthy
+      redis:
         condition: service_started
       app:
         condition: service_started  # ensures bun install + migrate have completed before worker starts
