@@ -146,7 +146,7 @@ export const processSubmission = async (data: SubmissionJobData) => {
     ]);
 
     // Stats JOB to update user stats after submission is processed
-    await StatsQueue.add("update-user-stats", { userId: data.userId }, { jobId: `update-user-stats:${data.userId}`, removeOnComplete: true });
+    await StatsQueue.add("update-user-stats", { userId: data.userId }, { jobId: `update-user-stats-${data.userId}`, removeOnComplete: true });
 
     return {
         allPassed,
