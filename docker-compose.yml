@@ -94,7 +94,7 @@ services:
   # 🟩 App — runs migrate then starts Next.js
   # CMD in Dockerfile: bunx prisma migrate deploy && bun server.js
   app:
-    <<: *app-build
+    <<: [*app-build, *default-logging]
     container_name: leetcode_app
     environment:
       <<: *app-env
@@ -113,11 +113,10 @@ services:
       - "3000:3000"
     # No volume mounts — prisma/generated is baked into the image at build time
     restart: unless-stopped
-    <<: *default-logging
 
   # 🟧 Submission Worker — same image, skips migrate (app already ran it)
   submission-worker:
-    <<: *app-build
+    <<: [*app-build, *default-logging]
     container_name: leetcode_submission_worker
     command: ["bun", "run", "worker:submission"]
     environment:
@@ -132,7 +131,22 @@ services:
       app:
         condition: service_started  # ensures migrate has completed before worker starts
     restart: unless-stopped
-    <<: *default-logging
+
+  # 🟪 Stats Worker — updates user stats after submissions are processed
+  stats-worker:
+    <<: [*app-build, *default-logging]
+    container_name: leetcode_stats_worker
+    command: ["bun", "run", "worker:stats"]
+    environment:
+      <<: *app-env
+    depends_on:
+      app-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      app:
+        condition: service_started  # ensures migrate has completed before worker starts
+    restart: unless-stopped
 
   # 🔵 Prisma Studio — separate lightweight image (Dockerfile.studio)
   # Main Dockerfile runs a full Next.js build — too heavy just for studio
