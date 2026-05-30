@@ -261,6 +261,7 @@ model UserStats {
   maxStreak           Int @default(0)
 
   ranking             Int?
+  acceptanceRate Float @default(0)
 
   updatedAt           DateTime @updatedAt
 

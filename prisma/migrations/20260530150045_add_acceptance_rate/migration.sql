@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "UserStats" ADD COLUMN     "acceptanceRate" DOUBLE PRECISION NOT NULL DEFAULT 0;
