@@ -32,15 +32,13 @@ export function CreateProblemView() {
                 id: crypto.randomUUID(),
                 input: "nums = [2,7,11,15], target = 9",
                 output: "[0,1]",
-                explanation:
-                    "Because nums[0] + nums[1] == 9, we return [0, 1].",
+                explanation: "Because nums[0] + nums[1] == 9, we return [0,1].",
             },
             {
                 id: crypto.randomUUID(),
                 input: "nums = [3,2,4], target = 6",
                 output: "[1,2]",
-                explanation:
-                    "Because nums[1] + nums[2] == 6, we return [1, 2].",
+                explanation: "Because nums[1] + nums[2] == 6, we return [1,2].",
             },
         ],
 
@@ -65,7 +63,6 @@ export function CreateProblemView() {
             },
         ],
 
-        // 👇 USER STARTING CODE (boilerplate)
         codeSnippets: [
             {
                 id: crypto.randomUUID(),
@@ -75,17 +72,17 @@ export function CreateProblemView() {
 def solve():
     import sys
     data = sys.stdin.read().split()
-    
+
     n = int(data[0])
     nums = list(map(int, data[1:n+1]))
     target = int(data[n+1])
 
     # Write your logic here
-    
 
 if __name__ == "__main__":
     solve()`,
             },
+
             {
                 id: crypto.randomUUID(),
                 language: "Javascript" as const,
@@ -96,7 +93,7 @@ function solve(input) {
 
     let index = 0;
     const n = data[index++];
-    
+
     const nums = [];
     for (let i = 0; i < n; i++) {
         nums.push(data[index++]);
@@ -117,7 +114,6 @@ process.stdin.on("end", () => solve(inputData));`,
             },
         ],
 
-        // 👇 CORRECT SOLUTIONS (JUDGE VERIFY)
         referenceSolutions: [
             {
                 id: crypto.randomUUID(),
@@ -125,7 +121,7 @@ process.stdin.on("end", () => solve(inputData));`,
                 code: `def solve():
     import sys
     data = sys.stdin.read().split()
-    
+
     n = int(data[0])
     nums = list(map(int, data[1:n+1]))
     target = int(data[n+1])
@@ -134,14 +130,17 @@ process.stdin.on("end", () => solve(inputData));`,
 
     for i in range(n):
         complement = target - nums[i]
+
         if complement in hashmap:
             print(hashmap[complement], i)
             return
+
         hashmap[nums[i]] = i
 
 if __name__ == "__main__":
     solve()`,
             },
+
             {
                 id: crypto.randomUUID(),
                 language: "Javascript" as const,
@@ -150,7 +149,7 @@ if __name__ == "__main__":
 
     let index = 0;
     const n = data[index++];
-    
+
     const nums = [];
     for (let i = 0; i < n; i++) {
         nums.push(data[index++]);
@@ -172,6 +171,7 @@ if __name__ == "__main__":
     }
 }
 
+// DO NOT REMOVE
 process.stdin.resume();
 process.stdin.setEncoding("utf-8");
 
@@ -312,4 +312,4 @@ process.stdin.on("end", () => solve(inputData));`,
             </div>
         </div>
     );
-};
+}
