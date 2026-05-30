@@ -6,52 +6,41 @@ import { StatsJobData } from "@/types";
 const StatsWorker = new Worker('stats', async (job: Job<StatsJobData>) => {
     const { userId } = job.data;
     try {
-        const totalSolved = await db.problemSolved.count({
-            where: {
-                userId: userId
-            }
-        });
-
-        const totalSubmissions = await db.submission.count({
-            where: {
-                userId: userId
-            }
-        });
-
-        const acceptedSubmissions = await db.submission.count({
-            where: {
-                userId: userId,
-                status: "ACCEPTED"
-            }
-        });
-
-        const easySolved = await db.problemSolved.count({
-            where: {
-                userId: userId,
-                problem: {
-                    difficulty: "EASY"
-                }
-            }
-        });
-
-        const mediumSolved = await db.problemSolved.count({
-            where: {
-                userId: userId,
-                problem: {
-                    difficulty: "MEDIUM"
-                }
-            }
-        });
-
-        const hardSolved = await db.problemSolved.count({
-            where: {
-                userId: userId,
-                problem: {
-                    difficulty: "HARD"
-                }
-            }
-        });
-
+        const [
+            totalSolved,
+            totalSubmissions,
+            acceptedSubmissions,
+            easySolved,
+            mediumSolved,
+            hardSolved,
+        ] = await Promise.all([
+            db.problemSolved.count({ where: { userId } }),
+            db.submission.count({ where: { userId } }),
+            db.submission.count({
+                where: {
+                    userId,
+                    status: "ACCEPTED",
+                },
+            }),
+            db.problemSolved.count({
+                where: {
+                    userId,
+                    problem: { difficulty: "EASY" },
+                },
+            }),
+            db.problemSolved.count({
+                where: {
+                    userId,
+                    problem: { difficulty: "MEDIUM" },
+                },
+            }),
+            db.problemSolved.count({
+                where: {
+                    userId,
+                    problem: { difficulty: "HARD" },
+                },
+            }),
+        ]);
 
         await db.userStats.upsert({
             where: {
