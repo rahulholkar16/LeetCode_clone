@@ -64,7 +64,7 @@ services:
 
   # ⚙️ Judge0 API
   judge0-server:
-    image: judge0/judge0:1.13.1
+    image: judge0/judge0:latest
     depends_on:
       - judge0-db
       - redis
@@ -79,7 +79,7 @@ services:
 
   # ⚙️ Judge0 Workers
   judge0-workers:
-    image: judge0/judge0:1.13.1
+    image: judge0/judge0:latest
     command: ["./scripts/workers"]
     depends_on:
       - judge0-db
@@ -147,23 +147,6 @@ services:
       app:
         condition: service_started  # ensures migrate has completed before worker starts
     restart: unless-stopped
-
-  # 🔵 Prisma Studio — separate lightweight image (Dockerfile.studio)
-  # Main Dockerfile runs a full Next.js build — too heavy just for studio
-  prisma-studio:
-    build:
-      context: .
-      dockerfile: Dockerfile.studio
-    container_name: leetcode_prisma_studio
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-    depends_on:
-      app-db:
-        condition: service_healthy
-    ports:
-      - "5555:5555"
-    restart: unless-stopped
-    <<: *default-logging
 
 volumes:
   app_db_data:

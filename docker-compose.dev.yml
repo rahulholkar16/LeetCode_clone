@@ -19,7 +19,11 @@ services:
       - app_db_dev_data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -27,181 +31,190 @@ services:
 
   # 🟥 Judge0 DB
   judge0-db:
-    image: postgres:16.2
-    container_name: judge0_database_dev
-    env_file: judge0.conf
-    volumes:
-      - judge0_db_dev_data:/var/lib/postgresql/data
-    restart: always
-    <<: *default-logging
+      image: postgres:16.2
+      container_name: judge0_database_dev
+      env_file: judge0.conf
+      volumes:
+          - judge0_db_dev_data:/var/lib/postgresql/data
+      restart: always
+      <<: *default-logging
 
   # 🟨 Redis
   redis:
-    image: redis:7.2.4
-    command: [
-      "bash", "-c",
-      'docker-entrypoint.sh --appendonly no --requirepass "$$REDIS_PASSWORD"'
-    ]
-    env_file: judge0.conf
-    restart: always
-    <<: *default-logging
+      image: redis:7.2.4
+      command:
+          [
+              "bash",
+              "-c",
+              'docker-entrypoint.sh --appendonly no --requirepass "$$REDIS_PASSWORD"',
+          ]
+      env_file: judge0.conf
+      restart: always
+      <<: *default-logging
 
   # ⚙️ Judge0 API
   judge0-server:
-    image: judge0/judge0:1.13.1
-    depends_on:
-      - judge0-db
-      - redis
-    volumes:
-      - ./judge0.conf:/judge0.conf:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    ports:
-      - "2358:2358"
-    privileged: true
-    restart: always
-    <<: *default-logging
+      image: judge0/judge0:latest
+      user: root
+      depends_on:
+          - judge0-db
+          - redis
+      volumes:
+          - ./judge0.conf:/judge0.conf:ro
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      ports:
+          - "2358:2358"
+      privileged: true
+      restart: always
+      <<: *default-logging
 
   # ⚙️ Judge0 Workers
   judge0-workers:
-    image: judge0/judge0:1.13.1
-    command: ["./scripts/workers"]
-    depends_on:
-      - judge0-db
-      - redis
-    volumes:
-      - ./judge0.conf:/judge0.conf:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    privileged: true
-    restart: always
-    <<: *default-logging
+      image: judge0/judge0:latest
+      user: root
+      command: ["./scripts/workers"]
+      depends_on:
+          - judge0-db
+          - redis
+      volumes:
+          - ./judge0.conf:/judge0.conf:ro
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      privileged: true
+      restart: always
+      <<: *default-logging
 
   # 🟩 App (DEV)
   app:
-    image: oven/bun:1-alpine 
-    container_name: leetcode_app_dev
-    working_dir: /app
-    command: >
-      sh -c "
-        bun install &&
-        bunx prisma generate &&
-        bunx prisma migrate deploy &&
-        bun run dev
-      "
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
-      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
-      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      NODE_ENV: development
-    volumes:
-      - .:/app
-      - app_node_modules_dev:/app/node_modules          # named volume — avoids host/container uid conflicts
-      - app_prisma_generated_dev:/app/prisma/generated  # named volume — generated once by app, shared read-only by others
-    depends_on:
-      app-db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    ports:
-      - "3000:3000"
-    restart: unless-stopped
-    <<: *default-logging
+      image: oven/bun:1-alpine
+      container_name: leetcode_app_dev
+      working_dir: /app
+      command: >
+          sh -c "
+            bun install &&
+            bunx prisma generate &&
+            bunx prisma migrate deploy &&
+            bun run dev
+          "
+      environment:
+          DATABASE_URL: ${DATABASE_URL}
+          BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+          BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+          GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+          GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+          GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+          GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+          REDIS_HOST: ${REDIS_HOST}
+          REDIS_PORT: ${REDIS_PORT}
+          REDIS_PASSWORD: ${REDIS_PASSWORD}
+          NODE_ENV: development
+      volumes:
+          - .:/app
+          - app_node_modules_dev:/app/node_modules
+          - app_next_dev:/app/.next
+      depends_on:
+          app-db:
+              condition: service_healthy
+          redis:
+              condition: service_started
+      ports:
+          - "3000:3000"
+      restart: unless-stopped
+      # Healthcheck — workers wait karenge jab tak bun install complete na ho
+      healthcheck:
+          test: ["CMD-SHELL", "test -f /app/node_modules/.bin/next"]
+          interval: 5s
+          timeout: 5s
+          retries: 40
+          start_period: 60s
+      <<: *default-logging
 
   # 🟧 Submission Worker (DEV)
   submission-worker:
-    image: oven/bun:1
-    container_name: leetcode_submission_worker_dev
-    working_dir: /app
-    command: >
-      sh -c "
-        bunx prisma generate &&
-        bun run worker:submission
-      "
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      NODE_ENV: development
-    volumes:
-      - .:/app
-      - app_node_modules_dev:/app/node_modules          # shared with app — already installed
-      - app_prisma_generated_dev:/app/prisma/generated  # shared with app — already generated
-    depends_on:
-      app-db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-      judge0-server:
-        condition: service_started
-      app:
-        condition: service_started  # ensures bun install + migrate have completed before worker starts
-    restart: unless-stopped
-    <<: *default-logging
+      image: oven/bun:1
+      container_name: leetcode_submission_worker_dev
+      working_dir: /app
+      command: >
+          sh -c "
+            bunx prisma generate &&
+            bun run worker:submission
+          "
+      environment:
+          DATABASE_URL: ${DATABASE_URL}
+          REDIS_HOST: ${REDIS_HOST}
+          REDIS_PORT: ${REDIS_PORT}
+          REDIS_PASSWORD: ${REDIS_PASSWORD}
+          NODE_ENV: development
+      volumes:
+          - .:/app
+          - app_node_modules_dev:/app/node_modules # shared with app — already installed
+      depends_on:
+          app-db:
+              condition: service_healthy
+          redis:
+              condition: service_started
+          judge0-server:
+              condition: service_started
+          app:
+              condition: service_healthy # bun install complete hone ka wait karega
+      restart: unless-stopped
+      <<: *default-logging
 
   # 🟪 Stats Worker (DEV)
   stats-worker:
-    image: oven/bun:1
-    container_name: leetcode_stats_worker_dev
-    working_dir: /app
-    command: >
-      sh -c "
-        bunx prisma generate &&
-        bun run worker:stats
-      "
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
-      NODE_ENV: development
-    volumes:
-      - .:/app
-      - app_node_modules_dev:/app/node_modules          # shared with app — already installed
-      - app_prisma_generated_dev:/app/prisma/generated  # shared with app — already generated
-    depends_on:
-      app-db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-      app:
-        condition: service_started  # ensures bun install + migrate have completed before worker starts
-    restart: unless-stopped
-    <<: *default-logging
+      image: oven/bun:1
+      container_name: leetcode_stats_worker_dev
+      working_dir: /app
+      command: >
+          sh -c "
+            bunx prisma generate &&
+            bun run worker:stats
+          "
+      environment:
+          DATABASE_URL: ${DATABASE_URL}
+          REDIS_HOST: ${REDIS_HOST}
+          REDIS_PORT: ${REDIS_PORT}
+          REDIS_PASSWORD: ${REDIS_PASSWORD}
+          NODE_ENV: development
+      volumes:
+          - .:/app
+          - app_node_modules_dev:/app/node_modules # shared with app — already installed
+      depends_on:
+          app-db:
+              condition: service_healthy
+          redis:
+              condition: service_started
+          app:
+              condition: service_healthy # bun install complete hone ka wait karega
+      restart: unless-stopped
+      <<: *default-logging
 
   # 🔵 Prisma Studio (DEV)
   prisma-studio:
-    image: oven/bun:1
-    container_name: leetcode_prisma_studio_dev
-    working_dir: /app
-    command: >
-      sh -c "
-        bunx prisma studio --port 5555 --browser none
-      "
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-    volumes:
-      - .:/app
-      - app_node_modules_dev:/app/node_modules          # shared — already installed
-      - app_prisma_generated_dev:/app/prisma/generated  # shared — already generated
-    depends_on:
-      app-db:
-        condition: service_healthy
-      app:
-        condition: service_started  # ensures prisma/generated is ready before studio starts
-    ports:
-      - "5555:5555"
-    restart: unless-stopped
-    <<: *default-logging
+      image: oven/bun:1
+      container_name: leetcode_prisma_studio_dev
+      working_dir: /app
+      command: >
+          sh -c "
+            bunx prisma studio --port 5555 --browser none
+          "
+      environment:
+          DATABASE_URL: ${DATABASE_URL}
+      volumes:
+          - .:/app
+          - app_node_modules_dev:/app/node_modules # shared — already installed
+      depends_on:
+          app-db:
+              condition: service_healthy
+          app:
+              condition: service_healthy # bun install complete hone ka wait karega
+      ports:
+          - "5555:5555"
+      restart: unless-stopped
+      <<: *default-logging
 
 volumes:
   app_db_dev_data:
   judge0_db_dev_data:
-  app_node_modules_dev:       # named — survives restarts, populated once by app service
-  app_prisma_generated_dev:   # named — populated once by app service, shared read-only by worker + studio
+  app_node_modules_dev: # named — survives restarts, populated once by app service
+  app_prisma_generated_dev: # named — populated once by app, shared with workers + studio
+  app_next_dev:

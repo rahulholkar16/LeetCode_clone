@@ -1,0 +1,36 @@
+function solve(input) {
+    const data = input.trim().split(/\s+/).map(Number);
+
+    let index = 0;
+    const n = data[index++];
+
+    const nums = [];
+    for (let i = 0; i < n; i++) {
+        nums.push(data[index++]);
+    }
+
+    const target = data[index];
+
+    const map = new Map();
+
+    for (let i = 0; i < n; i++) {
+        const complement = target - nums[i];
+
+        if (map.has(complement)) {
+            console.log(map.get(complement), i);
+            return;
+        }
+
+        map.set(nums[i], i);
+    }
+
+    console.log(-1); // if no pair found
+}
+
+// DO NOT REMOVE
+process.stdin.resume();
+process.stdin.setEncoding("utf-8");
+
+let inputData = "";
+process.stdin.on("data", chunk => inputData += chunk);
+process.stdin.on("end", () => solve(inputData));
