@@ -21,12 +21,10 @@ import TestCases from "./TestCase";
 import { useUiProblmStore } from "../../stores/problem-ui-store";
 import { getSubmissionStatusCategory } from "../../utils/submission-status";
 
-const sleep = (ms: number) =>
-    new Promise((resolve) => window.setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
 
 export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
-    const { selectedProblem, setSelectedProblem, getProblemById, addProblem } =
-        useProblmStore();
+    const { selectedProblem, setSelectedProblem, getProblemById, addProblem } = useProblmStore();
     const setSubmissions = useUiProblmStore((s) => s.setSubmissions);
 
     const [results, setResults] = useState<ExecutionResult[]>([]);
@@ -178,8 +176,7 @@ export function ProblemWorkspace({ initialProblem }: ProblemWorkspaceProps) {
 
         try {
             setIsSubmitting(true);
-            const { expected_outputs, language_id, stdin } =
-                getExecutionPayload();
+            const { expected_outputs, language_id, stdin } = getExecutionPayload();
             const res: ExecuteResponse = await executeCode(
                 editorCode,
                 language_id,

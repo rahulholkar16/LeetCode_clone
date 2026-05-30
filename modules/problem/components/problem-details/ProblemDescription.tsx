@@ -9,7 +9,6 @@ import SubmissionsList from "./SubmissionList";
 export function ProblemDescription({ problem }: ProblemDescriptionProps) {
     const submissions = useUiProblmStore(s => s.submissions);
     useGetAllSubmission(problem.id);
-    console.log("submmision:::", submissions);
     
     return (
         <Tabs defaultValue="description" className="w-full">
