@@ -1,11 +1,9 @@
 "use client";
 import {
-  calculateUserStats,
-  calculateStreak,
-  generateCalendarData,
-  getRecentActivity,
-  getLanguageStats,
-} from '../utils/index';
+    generateCalendarData,
+    getRecentActivity,
+    getLanguageStats,
+} from "../utils/index";
 import {
   Settings,
   Share2,
@@ -35,8 +33,15 @@ export function ProfileView() {
     if (error) return <div>Failed to load profile.</div>;
     if (!data) return null;
     // Calculate stats from submissions
-    const stats = calculateUserStats(data?.submission, data?.solvedProblems);
-    const streak = calculateStreak(data?.submission);
+    if (!data.stats) {
+        return <div>Stats not found</div>;
+    }
+
+    const stats = data.stats;
+    const streak = {
+        currentStreak: stats.currentStreak,
+        maxStreak: stats.maxStreak,
+    };
     const calendarData = generateCalendarData(data?.submission);
     const recentActivity = getRecentActivity(data?.submission, 5);
     const languageStats = getLanguageStats(data?.submission);
@@ -122,7 +127,7 @@ export function ProfileView() {
                         </div>
                         <div>
                             <span className="text-foreground font-semibold">
-                                {stats.acceptanceRate}%
+                                {stats.acceptanceRate.toFixed(1)}%
                             </span>{" "}
                             acceptance rate
                         </div>
@@ -170,7 +175,7 @@ export function ProfileView() {
                                         Acceptance Rate
                                     </p>
                                     <p className="text-3xl font-bold">
-                                        {stats.acceptanceRate}%
+                                        {stats.acceptanceRate.toFixed(1)}%
                                     </p>
                                     <p className="text-xs text-foreground/40 mt-1">
                                         {stats.acceptedSubmissions} /{" "}
@@ -245,7 +250,7 @@ export function ProfileView() {
                                                 <div className="flex items-center gap-4 flex-1">
                                                     <div className="shrink-0">
                                                         {submission.status ===
-                                                        "Accepted" ? (
+                                                        "ACCEPTED" ? (
                                                             <CheckCircle className="h-5 w-5 text-green-500" />
                                                         ) : (
                                                             <XCircle className="h-5 w-5 text-red-500" />
@@ -267,7 +272,7 @@ export function ProfileView() {
                                                         </div>
                                                         <div className="flex items-center gap-3 text-xs text-foreground/60">
                                                             {submission.status ===
-                                                                "Accepted" &&
+                                                                "ACCEPTED" &&
                                                                 submission.time && (
                                                                     <>
                                                                         <span>
@@ -292,13 +297,13 @@ export function ProfileView() {
                                                     <Badge
                                                         variant={
                                                             submission.status ===
-                                                            "Accepted"
+                                                            "ACCEPTED"
                                                                 ? "default"
                                                                 : "destructive"
                                                         }
                                                         className={
                                                             submission.status ===
-                                                            "Accepted"
+                                                            "ACCEPTED"
                                                                 ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
                                                                 : ""
                                                         }
