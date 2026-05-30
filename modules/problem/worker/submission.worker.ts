@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import { Worker } from "bullmq";
 import { redis } from "@/lib/redis";
-import { SUBMISSION_QUEUE_NAME } from "../queue/constants";
+import { SUBMISSION_QUEUE_NAME } from "../constant";
 import {
     markSubmissionFailed,
     processSubmission,

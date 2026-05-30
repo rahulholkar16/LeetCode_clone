@@ -1,7 +1,7 @@
 import { Queue } from "bullmq";
 import { redis } from "@/lib/redis";
 import type { SubmissionJobData } from "../services/submission.service";
-import { SUBMISSION_QUEUE_NAME } from "./constants";
+import { SUBMISSION_QUEUE_NAME } from "../constant";
 
 export const submissionQueue = new Queue<SubmissionJobData>(SUBMISSION_QUEUE_NAME, {
     connection: redis,

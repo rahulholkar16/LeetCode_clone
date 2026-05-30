@@ -7,6 +7,8 @@ export const languages = [
     "Cpp",
 ];
 
+export const SUBMISSION_QUEUE_NAME = "submission-queue";
+
 export const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
         case "EASY":
