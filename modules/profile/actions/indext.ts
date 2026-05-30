@@ -14,7 +14,8 @@ export const getCurrentUserData = async () => {
             include: {
                 solvedProblems: true,
                 submission: true,
-                playlists: true
+                playlists: true,
+                stats: true,
             },
         });
         return user;
