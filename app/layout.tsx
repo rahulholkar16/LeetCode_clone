@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Geist } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+
 import "./globals.css";
+
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/provider/query-provider";
 import { CircleX } from "lucide-react";
 import { ThemeProvider } from "@/components/provider/theme-provider";
 import AuthLayer from "@/modules/auth/components/auth-layer";
-
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
-
-const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
     title: "Code Master",
@@ -29,10 +24,15 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className={cn("font-sans", geist.variable)}
+            className={cn("font-sans", GeistSans.variable)}
             suppressHydrationWarning
         >
-            <body className={`${inter} antialiased`}>
+            <body
+                className="antialiased"
+                style={{
+                    fontFamily: '"Inter Variable", sans-serif',
+                }}
+            >
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
@@ -40,11 +40,10 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <QueryProvider>
-                        <AuthLayer>
-                            {children}
-                        </AuthLayer>
+                        <AuthLayer>{children}</AuthLayer>
                     </QueryProvider>
                 </ThemeProvider>
+
                 <Toaster
                     icons={{
                         error: <CircleX color="#ff0000" />,
@@ -53,4 +52,4 @@ export default function RootLayout({
             </body>
         </html>
     );
-}
+};
