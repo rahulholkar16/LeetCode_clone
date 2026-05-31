@@ -421,6 +421,28 @@ export interface PlaylistCardProps {
     onDelete: (playlistId: string) => void;
 }
 
+interface UserStats {
+    userId: string;
+
+    totalSolved: number;
+
+    easySolved: number;
+    mediumSolved: number;
+    hardSolved: number;
+
+    totalSubmissions: number;
+    acceptedSubmissions: number;
+
+    acceptanceRate: number;
+
+    currentStreak: number;
+    maxStreak: number;
+
+    ranking: number | null;
+
+    updatedAt: string;
+}
+
 interface UserProfileData {
     id: string;
     name: string;
@@ -433,6 +455,7 @@ interface UserProfileData {
     solvedProblems: SolvedProblem[];
     submission: UserSubmission[];
     playlists: Playlist[];
+    stats: UserStats | null;
 }
 
 export interface DailySubmission {
