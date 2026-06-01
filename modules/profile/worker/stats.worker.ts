@@ -54,8 +54,7 @@ function calculateStreak(dates: Date[]) {
         if (!previousDate) {
             streak = 1;
         } else {
-            const diffDays =
-                Math.floor(
+            const diffDays = Math.floor(
                     (currentDate.getTime() -
                         previousDate.getTime()) /
                     (1000 * 60 * 60 * 24)
@@ -111,7 +110,7 @@ export const StatsWorker = new Worker(
                 db.submission.count({
                     where: {
                         userId,
-                        status: "ACCEPTED",
+                        status: "Accepted",
                     },
                 }),
 
@@ -156,20 +155,14 @@ export const StatsWorker = new Worker(
                 }),
             ]);
 
-            const acceptanceRate =
-                totalSubmissions > 0
-                    ? (
-                        acceptedSubmissions /
-                        totalSubmissions
-                    ) * 100
-                    : 0;
-
+            const acceptanceRate = totalSubmissions > 0 ? (acceptedSubmissions / totalSubmissions) * 100 : 0;
+            
             const {
                 currentStreak,
                 maxStreak,
             } = calculateStreak(
                 submissions.map(
-                    (s) => s.createdAt
+                    (s: { createdAt: Date }) => s.createdAt
                 )
             );
 
