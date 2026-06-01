@@ -250,7 +250,7 @@ export function ProfileView() {
                                                 <div className="flex items-center gap-4 flex-1">
                                                     <div className="shrink-0">
                                                         {submission.status ===
-                                                        "ACCEPTED" ? (
+                                                        "Accepted" ? (
                                                             <CheckCircle className="h-5 w-5 text-green-500" />
                                                         ) : (
                                                             <XCircle className="h-5 w-5 text-red-500" />
@@ -272,7 +272,7 @@ export function ProfileView() {
                                                         </div>
                                                         <div className="flex items-center gap-3 text-xs text-foreground/60">
                                                             {submission.status ===
-                                                                "ACCEPTED" &&
+                                                                "Accepted" &&
                                                                 submission.time && (
                                                                     <>
                                                                         <span>
@@ -297,13 +297,13 @@ export function ProfileView() {
                                                     <Badge
                                                         variant={
                                                             submission.status ===
-                                                            "ACCEPTED"
+                                                            "Accepted"
                                                                 ? "default"
                                                                 : "destructive"
                                                         }
                                                         className={
                                                             submission.status ===
-                                                            "ACCEPTED"
+                                                            "Accepted"
                                                                 ? "bg-green-500/10 text-green-500 hover:bg-green-500/20"
                                                                 : ""
                                                         }
