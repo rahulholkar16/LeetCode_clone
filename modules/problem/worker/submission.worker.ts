@@ -7,7 +7,7 @@ import {
     markSubmissionFailed,
     processSubmission,
 } from "../services/submission.service";
-import type { SubmissionJobData } from "../services/submission.service";
+import type { SubmissionJobData } from "@/types";
 
 const worker = new Worker<SubmissionJobData>(
     SUBMISSION_QUEUE_NAME,

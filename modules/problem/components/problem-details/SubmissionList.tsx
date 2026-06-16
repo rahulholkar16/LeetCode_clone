@@ -12,14 +12,15 @@ import {
     Filter,
     Copy,
 } from "lucide-react";
-import { ResSubmission, SubmissionListProps } from "@/types";
+import type {
+    ResSubmission,
+    SubmissionListProps,
+    SubmissionStatusCategory,
+} from "@/types";
 import { SubmissionsStats } from "./SubmissionStats";
 import { formatSubmissionDate } from "../../constant";
 import { Button } from "@/components/ui/button";
-import {
-    getSubmissionStatusCategory,
-    type SubmissionStatusCategory,
-} from "../../utils/submission-status";
+import { getSubmissionStatusCategory } from "../../utils/submission-status";
 
 export default function SubmissionsList({ submissions }: SubmissionListProps) {
     const [expandedSubmission, setExpandedSubmission] = useState<string | null>(

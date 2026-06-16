@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useSession } from "@/modules/auth/hooks/useSession";
 import { getDifficultyColor } from "@/modules/problem/constant";
-import { PlaylistPayload } from "@/types";
+import type { PlaylistDetailClientProps, PlaylistPayload } from "@/types";
 import {
     useDeletePlaylist,
     usePlaylists,
@@ -37,10 +37,6 @@ import {
 import { usePlaylistStore } from "../stores/playlist-store";
 import { AddProblemsToPlaylistDialog } from "./AddProblemsToPlaylistDialog";
 import { CreateEditPlaylistDialog } from "./CreateEditPlaylistDialog";
-
-interface PlaylistDetailClientProps {
-    id: string;
-}
 
 const formatDate = (date: string) =>
     new Date(date).toLocaleDateString("en-US", {

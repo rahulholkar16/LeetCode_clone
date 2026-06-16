@@ -17,14 +17,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGetAllProblems } from "@/modules/problem/hooks/useGetAllProblems";
 import { useProblmStore } from "@/modules/problem/stores/problem-store";
 import { getDifficultyColor } from "@/modules/problem/constant";
-import { Playlist } from "@/types";
+import type { AddProblemsToPlaylistDialogProps } from "@/types";
 import { useAddProblemsToPlaylist } from "../hooks/use-playlists";
-
-interface AddProblemsToPlaylistDialogProps {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    playlist: Playlist;
-}
 
 export function AddProblemsToPlaylistDialog({
     open,

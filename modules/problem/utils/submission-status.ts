@@ -1,11 +1,4 @@
-export type SubmissionStatusCategory =
-    | "Accepted"
-    | "Wrong Answer"
-    | "Time Limit Exceeded"
-    | "Runtime Error"
-    | "Compile Error"
-    | "Pending"
-    | "Other";
+import type { SubmissionStatusCategory } from "@/types";
 
 export const getSubmissionStatusCategory = (
     status: string,

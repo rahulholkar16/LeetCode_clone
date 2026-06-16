@@ -50,7 +50,7 @@ export function ProfileView() {
         year: "numeric",
     });
 
-    const formatTime = (timestamp: string) => {
+    const formatTime = (timestamp: string | Date) => {
         const now = new Date();
         const date = new Date(timestamp);
         const diff = now.getTime() - date.getTime();

@@ -1,22 +1,7 @@
-interface Submission {
-    id: string;
-    userId: string;
-    problemId: string;
-    sourceCode: string;
-    language: string;
-    stdin: string;
-    stdout: string | null;
-    stderr: string | null;
-    compileOutput: string | null;
-    status: string;
-    memory: string | null;
-    time: string | null;
-    createdAt: string;
-    updatedAt: string;
-}
+import type { ProfileSubmission } from "@/types";
 
-export function generateCalendarData(submissions: Submission[]) {
-    const submissionsByDate = new Map<string, Submission[]>();
+export function generateCalendarData(submissions: ProfileSubmission[]) {
+    const submissionsByDate = new Map<string, ProfileSubmission[]>();
 
     submissions.forEach(sub => {
         const date = new Date(sub.createdAt).toISOString().split('T')[0];
@@ -47,13 +32,13 @@ export function generateCalendarData(submissions: Submission[]) {
     return calendarData;
 }
 
-export function getRecentActivity(submissions: Submission[], limit = 10) {
+export function getRecentActivity(submissions: ProfileSubmission[], limit = 10) {
     return submissions
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         .slice(0, limit);
 }
 
-export function getLanguageStats(submissions: Submission[]) {
+export function getLanguageStats(submissions: ProfileSubmission[]) {
     const languageCount = new Map<string, number>();
 
     submissions.forEach(sub => {

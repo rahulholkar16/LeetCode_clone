@@ -2,16 +2,7 @@ import { db } from "@/lib/db";
 import { pollBatchResults, submitBatch } from "@/lib/judge0";
 import { getLanguageName } from "../constant";
 import StatsQueue from "@/modules/profile/Queue/queue";
-
-export interface SubmissionJobData {
-    submissionId: string;
-    userId: string;
-    problemId: string;
-    sourceCode: string;
-    languageId: number;
-    stdin: string[];
-    expectedOutputs: string[];
-}
+import type { SubmissionJobData } from "@/types";
 
 export const validateExecutionPayload = (
     stdin: string[],
