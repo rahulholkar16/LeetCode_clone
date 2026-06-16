@@ -155,7 +155,7 @@ export interface ProblemUIStore {
 
     setSubmissions: (submission: ResSubmission[]) => void;
 
-    setTitle: (title: string) => vostringid;
+    setTitle: (title: string) => void;
     setTag: (tag: string) => void;
     setDifficulty: (difficulty: Difficulty) => void;
     removeTag: (tag: string) => void;
@@ -421,7 +421,20 @@ export interface PlaylistCardProps {
     onDelete: (playlistId: string) => void;
 }
 
-interface UserStats {
+export interface AddProblemsToPlaylistDialogProps {
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    playlist: Playlist;
+}
+
+export interface PlaylistDetailClientProps {
+    id: string;
+}
+
+/**
+ * Profile Types
+*/
+export interface UserStats {
     userId: string;
 
     totalSolved: number;
@@ -443,7 +456,33 @@ interface UserStats {
     updatedAt: string;
 }
 
-interface UserProfileData {
+export interface SolvedProblem {
+    id: string;
+    userId: string;
+    problemId: string;
+    createdAt: string | Date;
+}
+
+export interface ProfileSubmission {
+    id: string;
+    userId: string;
+    problemId: string;
+    sourceCode: string;
+    language: string;
+    stdin: string | null;
+    stdout: string | null;
+    stderr: string | null;
+    compileOutput: string | null;
+    status: string;
+    memory: string | null;
+    time: string | null;
+    createdAt: string | Date;
+    updatedAt: string | Date;
+}
+
+export type UserSubmission = ProfileSubmission;
+
+export interface UserProfileData {
     id: string;
     name: string;
     email: string;
@@ -471,3 +510,25 @@ export interface SubmissionCalendarProps {
 export interface StatsJobData {
     userId: string;
 }
+
+/**
+ * Queue and Submission Status Types
+*/
+export interface SubmissionJobData {
+    submissionId: string;
+    userId: string;
+    problemId: string;
+    sourceCode: string;
+    languageId: number;
+    stdin: string[];
+    expectedOutputs: string[];
+}
+
+export type SubmissionStatusCategory =
+    | "Accepted"
+    | "Wrong Answer"
+    | "Time Limit Exceeded"
+    | "Runtime Error"
+    | "Compile Error"
+    | "Pending"
+    | "Other";
