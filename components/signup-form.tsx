@@ -15,6 +15,7 @@ import { Loader2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { githubSignUp, googleSignUp } from "@/modules/auth/actions/auth-action";
+import Link from "next/link";
 
 const SignUpForm = () => {
     const { signUp, isSigningUp } = useAuth();
@@ -38,26 +39,29 @@ const SignUpForm = () => {
     };
 
     const handleGoogle = async () => {
-            await googleSignUp();
-        };
-    
-        const handleGithub = async () => {
-            await githubSignUp();
-        };
+        await googleSignUp();
+    };
+
+    const handleGithub = async () => {
+        await githubSignUp();
+    };
 
     return (
         <div className="flex flex-col gap-6">
-            <Card className="overflow-hidden p-0">
+            <Card className="overflow-hidden border-border/50 bg-background/95 p-0 shadow-2xl shadow-orange-500/10 backdrop-blur-md supports-[backdrop-filter]:bg-background/75">
                 <CardContent className="grid p-0">
-                    <form action={onSubmit} className="p-6">
-                        <FieldGroup>
+                    <form action={onSubmit} className="p-6 sm:p-8">
+                        <FieldGroup className="gap-5">
                             <div className="flex flex-col items-center gap-2 text-center">
-                                <h1 className="text-2xl font-bold">
+                                <div className="mb-2 inline-flex items-center rounded-full border border-yellow-500/30 bg-linear-to-r from-yellow-400/20 to-orange-500/20 px-3 py-1 text-xs font-semibold text-yellow-500">
+                                    Join CodeMaster
+                                </div>
+                                <h1 className="bg-linear-to-r from-yellow-400 via-orange-500 to-red-500 bg-clip-text text-3xl font-bold text-transparent">
                                     Create your account
                                 </h1>
                                 <p className="text-sm text-balance text-muted-foreground">
-                                    Enter your email below to create your
-                                    account
+                                    Start solving problems and tracking your
+                                    coding progress.
                                 </p>
                             </div>
                             <Field>
@@ -68,11 +72,11 @@ const SignUpForm = () => {
                                     name="email"
                                     placeholder="m@example.com"
                                     disabled={isSigningUp}
+                                    className="h-10 border-border/60 bg-background/70 px-3 focus-visible:border-yellow-500 focus-visible:ring-yellow-500/30 dark:bg-input/30"
                                     required
                                 />
                                 <FieldDescription>
-                                    We&apos;ll use this to contact you. We will
-                                    not share your email with anyone else.
+                                    We&apos;ll keep your email private.
                                 </FieldDescription>
                             </Field>
 
@@ -82,13 +86,13 @@ const SignUpForm = () => {
                                     id="name"
                                     type="text"
                                     name="name"
-                                    placeholder="Jhon Doe"
+                                    placeholder="John Doe"
                                     disabled={isSigningUp}
+                                    className="h-10 border-border/60 bg-background/70 px-3 focus-visible:border-yellow-500 focus-visible:ring-yellow-500/30 dark:bg-input/30"
                                     required
                                 />
                                 <FieldDescription>
-                                    We&apos;ll use this to contact you. We will
-                                    not share your Name with anyone else.
+                                    This appears on your profile.
                                 </FieldDescription>
                             </Field>
 
@@ -103,6 +107,7 @@ const SignUpForm = () => {
                                             type="password"
                                             name="password"
                                             disabled={isSigningUp}
+                                            className="h-10 border-border/60 bg-background/70 px-3 focus-visible:border-yellow-500 focus-visible:ring-yellow-500/30 dark:bg-input/30"
                                             required
                                         />
                                     </Field>
@@ -115,6 +120,7 @@ const SignUpForm = () => {
                                             type="password"
                                             name="confirm-password"
                                             disabled={isSigningUp}
+                                            className="h-10 border-border/60 bg-background/70 px-3 focus-visible:border-yellow-500 focus-visible:ring-yellow-500/30 dark:bg-input/30"
                                             required
                                         />
                                     </Field>
@@ -124,7 +130,11 @@ const SignUpForm = () => {
                                 </FieldDescription>
                             </Field>
                             <Field>
-                                <Button type="submit">
+                                <Button
+                                    type="submit"
+                                    disabled={isSigningUp}
+                                    className="h-10 bg-linear-to-r from-yellow-400 to-orange-500 font-bold text-black shadow-lg shadow-orange-500/20 hover:from-yellow-500 hover:to-orange-600 hover:shadow-orange-500/40"
+                                >
                                     {isSigningUp ? (
                                         <Loader2Icon
                                             role="status"
@@ -138,11 +148,17 @@ const SignUpForm = () => {
                                     )}
                                 </Button>
                             </Field>
-                            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
+                            <FieldSeparator className="*:data-[slot=field-separator-content]:bg-background">
                                 Or continue with
                             </FieldSeparator>
                             <Field className="grid grid-cols-2 gap-4">
-                                <Button variant="outline" type="button" onClick={handleGoogle}>
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={handleGoogle}
+                                    disabled={isSigningUp}
+                                    className="h-10 border-border/60 bg-background/70 hover:border-yellow-500/50 hover:bg-yellow-500/10 dark:bg-input/30"
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 24 24"
@@ -156,7 +172,13 @@ const SignUpForm = () => {
                                         Sign up with Google
                                     </span>
                                 </Button>
-                                <Button variant="outline" type="button" onClick={handleGithub}>
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    onClick={handleGithub}
+                                    disabled={isSigningUp}
+                                    className="h-10 border-border/60 bg-background/70 hover:border-yellow-500/50 hover:bg-yellow-500/10 dark:bg-input/30"
+                                >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 640 640"
@@ -169,7 +191,13 @@ const SignUpForm = () => {
                                 </Button>
                             </Field>
                             <FieldDescription className="text-center">
-                                Already have an account? <a href="#">Sign in</a>
+                                Already have an account?{" "}
+                                <Link
+                                    href="/sign-in"
+                                    className="font-semibold text-yellow-500 hover:text-orange-500"
+                                >
+                                    Sign in
+                                </Link>
                             </FieldDescription>
                         </FieldGroup>
                     </form>
@@ -177,8 +205,14 @@ const SignUpForm = () => {
             </Card>
             <FieldDescription className="px-6 text-center">
                 By clicking continue, you agree to our{" "}
-                <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>.
+                <a href="#" className="text-yellow-500 hover:text-orange-500">
+                    Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="#" className="text-yellow-500 hover:text-orange-500">
+                    Privacy Policy
+                </a>
+                .
             </FieldDescription>
         </div>
     );

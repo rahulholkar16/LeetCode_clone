@@ -44,7 +44,7 @@ export function HeroSection() {
                             className="bg-linear-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-bold text-lg px-6 py-5 shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-all"
                         >
                             <Link
-                                href="/signup"
+                                href="/sign-up"
                                 className="flex items-center gap-2"
                             >
                                 Get Started Free

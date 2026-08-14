@@ -24,7 +24,7 @@ export function CTASection() {
                             size="lg"
                             className="bg-black hover:bg-black/90 text-white font-bold text-lg px-8 shadow-xl"
                         >
-                            <Link href="/signup">Start Learning Now</Link>
+                            <Link href="/sign-up">Start Learning Now</Link>
                         </Button>
                     </div>
                 </div>
